@@ -201,14 +201,16 @@ var _user$project$Main$makePlayers = function (n) {
 			A2(_elm_lang$core$List$range, 0, 14));
 	};
 	var makePlayer = function (id) {
-		return A3(
+		return A5(
 			_user$project$Types$Player,
 			makeDeck(id),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'toto ',
 				_elm_lang$core$Basics$toString(id)),
-			id);
+			id,
+			_elm_lang$core$Maybe$Nothing,
+			0);
 	};
 	return A3(
 		_elm_lang$core$List$foldr,
@@ -248,38 +250,42 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'PickUpPiece':
-				var newPlayers = A3(
-					_elm_lang$core$Dict$update,
-					_p14._0.playerId,
-					function (mv) {
-						var _p16 = mv;
-						if (_p16.ctor === 'Nothing') {
-							return _elm_lang$core$Maybe$Nothing;
-						} else {
-							return _elm_lang$core$Maybe$Just(
-								_elm_lang$core$Native_Utils.update(
-									_p16._0,
-									{
-										deck: A2(
-											_elm_lang$core$List$filter,
-											function (p) {
-												return !_elm_lang$core$Native_Utils.eq(p.value, _p14._0.value);
-											},
-											_p16._0.deck)
-									}));
-						}
+				var _p18 = _p14._0.playerId;
+				var _p16 = A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.choice;
 					},
-					model.players);
-				var _p17 = model.currentPiece;
-				if (_p17.ctor === 'Nothing') {
+					A2(_elm_lang$core$Dict$get, _p18, model.players));
+				if (_p16.ctor === 'Nothing') {
+					var newPlayers = A3(
+						_elm_lang$core$Dict$update,
+						_p18,
+						function (mv) {
+							var _p17 = mv;
+							if (_p17.ctor === 'Nothing') {
+								return _elm_lang$core$Maybe$Nothing;
+							} else {
+								return _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Native_Utils.update(
+										_p17._0,
+										{
+											deck: A2(
+												_elm_lang$core$List$filter,
+												function (p) {
+													return !_elm_lang$core$Native_Utils.eq(p.value, _p14._0.value);
+												},
+												_p17._0.deck),
+											choice: _elm_lang$core$Maybe$Just(_p14._0)
+										}));
+							}
+						},
+						model.players);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{
-								currentPiece: _elm_lang$core$Maybe$Just(_p14._0),
-								players: newPlayers
-							}),
+							{players: newPlayers}),
 						{ctor: '[]'});
 				} else {
 					return A2(
@@ -288,29 +294,40 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			default:
-				var _p22 = _p14._0._1;
-				var _p21 = _p14._0._0;
-				var _p18 = {
+				var _p24 = _p14._0._1;
+				var _p23 = _p14._0._0;
+				var currentPiece = A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.choice;
+					},
+					A2(
+						_elm_lang$core$Maybe$andThen,
+						function (k) {
+							return A2(_elm_lang$core$Dict$get, k, model.players);
+						},
+						model.currentPlayer));
+				var _p19 = {
 					ctor: '_Tuple2',
-					_0: model.currentPiece,
+					_0: currentPiece,
 					_1: A2(
 						_elm_lang$core$Dict$get,
-						{ctor: '_Tuple2', _0: _p21, _1: _p22},
+						{ctor: '_Tuple2', _0: _p23, _1: _p24},
 						model.board)
 				};
 				_v9_2:
 				do {
-					if (_p18.ctor === '_Tuple2') {
-						if (_p18._0.ctor === 'Nothing') {
+					if (_p19.ctor === '_Tuple2') {
+						if (_p19._0.ctor === 'Nothing') {
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								model,
 								{ctor: '[]'});
 						} else {
-							if (_p18._1.ctor === 'Just') {
-								var _p20 = _p18._0._0.playerId;
-								var _p19 = _p18._1._0.state;
-								switch (_p19.ctor) {
+							if (_p19._1.ctor === 'Just') {
+								var _p22 = _p19._0._0.playerId;
+								var _p20 = _p19._1._0.state;
+								switch (_p20.ctor) {
 									case 'UnPlayable':
 										return A2(
 											_elm_lang$core$Platform_Cmd_ops['!'],
@@ -322,14 +339,29 @@ var _user$project$Main$update = F2(
 											model,
 											{ctor: '[]'});
 									default:
+										var newPlayers = A3(
+											_elm_lang$core$Dict$update,
+											_p22,
+											function (mv) {
+												var _p21 = mv;
+												if (_p21.ctor === 'Nothing') {
+													return _elm_lang$core$Maybe$Nothing;
+												} else {
+													return _elm_lang$core$Maybe$Just(
+														_elm_lang$core$Native_Utils.update(
+															_p21._0,
+															{choice: _elm_lang$core$Maybe$Nothing}));
+												}
+											},
+											model.players);
 										var newCell = A3(
 											_user$project$Types$Cell,
-											_p21,
-											_p22,
-											_user$project$Types$Contain(_p18._0._0));
+											_p23,
+											_p24,
+											_user$project$Types$Contain(_p19._0._0));
 										var newBoard = A3(
 											_elm_lang$core$Dict$insert,
-											{ctor: '_Tuple2', _0: _p21, _1: _p22},
+											{ctor: '_Tuple2', _0: _p23, _1: _p24},
 											newCell,
 											model.board);
 										return A2(
@@ -338,11 +370,11 @@ var _user$project$Main$update = F2(
 												model,
 												{
 													board: newBoard,
+													players: newPlayers,
 													currentPlayer: _elm_lang$core$Maybe$Just(
 														_elm_lang$core$Native_Utils.eq(
-															_p20,
-															_elm_lang$core$Dict$size(model.players)) ? 1 : (_p20 + 1)),
-													currentPiece: _elm_lang$core$Maybe$Nothing
+															_p22,
+															_elm_lang$core$Dict$size(model.players)) ? 1 : (_p22 + 1))
 												}),
 											{ctor: '[]'});
 								}
@@ -370,8 +402,7 @@ var _user$project$Main$init = A2(
 			_user$project$Main$boardWithEdge,
 			_user$project$Main$n,
 			_user$project$Main$hexaBoard(_user$project$Main$n)),
-		currentPlayer: _elm_lang$core$Maybe$Just(1),
-		currentPiece: _elm_lang$core$Maybe$Nothing
+		currentPlayer: _elm_lang$core$Maybe$Just(1)
 	},
 	{ctor: '[]'});
 var _user$project$Main$main = _elm_lang$html$Html$program(

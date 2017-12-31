@@ -28,6 +28,8 @@ type alias Player =
     { deck : List Piece
     , name : String
     , id : Int
+    , choice : Maybe Piece
+    , score : Int
     }
 
 
@@ -43,7 +45,6 @@ type alias Model =
     , players : Dict Int Player
     , board : Board
     , currentPlayer : Maybe Int
-    , currentPiece : Maybe Piece
     }
 
 

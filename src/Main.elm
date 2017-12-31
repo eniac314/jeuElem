@@ -28,7 +28,6 @@ init =
 
     --|> rainbowEdge n
     , currentPlayer = Just 1
-    , currentPiece = Nothing
     }
         ! []
 
@@ -45,32 +44,47 @@ update msg model =
                     model ! []
 
         PickUpPiece ({ value, playerId } as piece) ->
-            let
-                newPlayers =
-                    Dict.update playerId
-                        (\mv ->
-                            case mv of
-                                Nothing ->
-                                    Nothing
-
-                                Just ({ deck, name, id } as player) ->
-                                    Just { player | deck = List.filter (\p -> p.value /= value) deck }
-                        )
-                        model.players
-            in
-            case model.currentPiece of
+            case
+                Dict.get playerId model.players
+                    |> Maybe.andThen .choice
+            of
                 Nothing ->
+                    let
+                        newPlayers =
+                            Dict.update playerId
+                                (\mv ->
+                                    case mv of
+                                        Nothing ->
+                                            Nothing
+
+                                        Just ({ deck, name, id } as player) ->
+                                            Just
+                                                { player
+                                                    | deck = List.filter (\p -> p.value /= value) deck
+                                                    , choice = Just piece
+                                                }
+                                )
+                                model.players
+                    in
                     { model
-                        | currentPiece = Just piece
-                        , players = newPlayers
+                        | players = newPlayers
                     }
                         ! []
 
-                Just _ ->
+                _ ->
                     model ! []
 
         PutDownPiece ( xPos, yPos ) ->
-            case ( model.currentPiece, Dict.get ( xPos, yPos ) model.board ) of
+            let
+                currentPiece =
+                    model.currentPlayer
+                        |> Maybe.andThen
+                            (\k ->
+                                Dict.get k model.players
+                            )
+                        |> Maybe.andThen .choice
+            in
+            case ( currentPiece, Dict.get ( xPos, yPos ) model.board ) of
                 ( Nothing, _ ) ->
                     model ! []
 
@@ -89,16 +103,31 @@ update msg model =
 
                                 newBoard =
                                     Dict.insert ( xPos, yPos ) newCell model.board
+
+                                newPlayers =
+                                    Dict.update playerId
+                                        (\mv ->
+                                            case mv of
+                                                Nothing ->
+                                                    Nothing
+
+                                                Just ({ deck, name, id } as player) ->
+                                                    Just
+                                                        { player
+                                                            | choice = Nothing
+                                                        }
+                                        )
+                                        model.players
                             in
                             { model
                                 | board = newBoard
+                                , players = newPlayers
                                 , currentPlayer =
                                     Just <|
                                         if playerId == Dict.size model.players then
                                             1
                                         else
                                             playerId + 1
-                                , currentPiece = Nothing
                             }
                                 ! []
 
@@ -117,7 +146,7 @@ makePlayers n =
                 |> List.map (\v -> Piece v id)
 
         makePlayer id =
-            Player (makeDeck id) ("toto " ++ toString id) id
+            Player (makeDeck id) ("toto " ++ toString id) id Nothing 0
     in
     List.map makePlayer (List.range 1 n)
         |> List.foldr (\p res -> Dict.insert p.id p res) Dict.empty

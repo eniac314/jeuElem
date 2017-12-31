@@ -32,6 +32,16 @@ view model =
                 ]
             , deckSvg model
             ]
+        , div
+            [ Attr.style
+                [ ( "width", "100%" )
+                , ( "padding-top", "0.75em" )
+
+                --, ( "background-color", "red" )
+                ]
+            ]
+            [ selectedSvg model
+            ]
         ]
 
 
@@ -141,6 +151,36 @@ deckHexaSvg x y radius { value, playerId } =
     --    , SvgAttr.stroke "black"
     --    ]
     --    [ Svg.text (toString value) ]
+    ]
+
+
+selectedHexaSvg radius { value, playerId } =
+    let
+        points =
+            [ ( radius, 0 )
+            , ( radius, pi / 3 )
+            , ( radius, 2 * pi / 3 )
+            , ( radius, pi )
+            , ( radius, 4 * pi / 3 )
+            , ( radius, 5 * pi / 3 )
+            ]
+                |> List.map (\( l, a ) -> ( l, a + pi / 6 ))
+                |> List.map fromPolar
+                |> List.map (\( u, v ) -> ( u + 50, v + 50 ))
+                |> List.foldr (\( u, v ) acc -> acc ++ (toString u ++ ", " ++ toString v ++ " ")) ""
+    in
+    [ polygon
+        [ SvgAttr.fill <| playerColor playerId
+        , SvgAttr.points points
+        ]
+        []
+    , polygon
+        [ SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
+        , SvgAttr.stroke "black"
+        , SvgAttr.strokeWidth "2px"
+        , SvgAttr.points points
+        ]
+        []
     ]
 
 
@@ -271,6 +311,52 @@ hexaBoardSvg n l board =
         --, br [] []
         --, Html.text <| "number of cells: " ++ (toString <| List.length cells)
         ]
+
+
+selectedSvg model =
+    let
+        piece =
+            model.currentPlayer
+                |> Maybe.andThen
+                    (\k ->
+                        Dict.get k model.players
+                    )
+                |> Maybe.andThen .choice
+    in
+    case piece of
+        Nothing ->
+            div
+                [ Attr.style
+                    [ ( "width", "100px" )
+                    , ( "height", "100px" )
+                    , ( "margin", "auto" )
+                    , ( "border-style", "solid" )
+                    , ( "border-color", "black" )
+                    ]
+                ]
+                []
+
+        Just piece ->
+            div
+                [ Attr.style
+                    [ ( "width", "100px" )
+                    , ( "height", "100px" )
+                    , ( "margin", "auto" )
+                    , ( "border-style", "solid" )
+                    , ( "border-color", "black" )
+                    ]
+                ]
+                [ svg
+                    [ SvgAttr.width "100"
+                    , SvgAttr.height "100"
+                    , SvgAttr.viewBox "0 0 100 100"
+                    ]
+                    (selectedHexaSvg 35 piece)
+                ]
+
+
+
+-------------------------------------------------------------------------------
 
 
 piecesPatterns =
