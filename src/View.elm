@@ -291,7 +291,7 @@ piecesPatterns =
                     , SvgAttr.height "80"
                     , SvgAttr.width "80"
                     , SvgAttr.xlinkHref <|
-                        "/images/pieces/piece"
+                        "../images/pieces/piece"
                             ++ toString n
                             ++ ".png"
                     ]
