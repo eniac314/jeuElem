@@ -1,0 +1,36 @@
+var _user$project$Types$Piece = F2(
+	function (a, b) {
+		return {value: a, playerId: b};
+	});
+var _user$project$Types$Player = F3(
+	function (a, b, c) {
+		return {deck: a, name: b, id: c};
+	});
+var _user$project$Types$Cell = F3(
+	function (a, b, c) {
+		return {xPos: a, yPos: b, state: c};
+	});
+var _user$project$Types$Model = F5(
+	function (a, b, c, d, e) {
+		return {boardSize: a, players: b, board: c, currentPlayer: d, currentPiece: e};
+	});
+var _user$project$Types$Empty = {ctor: 'Empty'};
+var _user$project$Types$Contain = function (a) {
+	return {ctor: 'Contain', _0: a};
+};
+var _user$project$Types$UnPlayable = function (a) {
+	return {ctor: 'UnPlayable', _0: a};
+};
+var _user$project$Types$Rainbow = function (a) {
+	return {ctor: 'Rainbow', _0: a};
+};
+var _user$project$Types$Grey = {ctor: 'Grey'};
+var _user$project$Types$PutDownPiece = function (a) {
+	return {ctor: 'PutDownPiece', _0: a};
+};
+var _user$project$Types$PickUpPiece = function (a) {
+	return {ctor: 'PickUpPiece', _0: a};
+};
+var _user$project$Types$SetPlayerNumber = function (a) {
+	return {ctor: 'SetPlayerNumber', _0: a};
+};

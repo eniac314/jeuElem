@@ -1,0 +1,661 @@
+var _user$project$View$playerColor = function (playerId) {
+	return _elm_lang$core$Native_Utils.eq(playerId, 1) ? '#f0f9e8' : (_elm_lang$core$Native_Utils.eq(playerId, 2) ? '#ccebc5' : (_elm_lang$core$Native_Utils.eq(playerId, 3) ? '#a8ddb5' : (_elm_lang$core$Native_Utils.eq(playerId, 4) ? '#7bccc4' : (_elm_lang$core$Native_Utils.eq(playerId, 5) ? '#43a2ca' : (_elm_lang$core$Native_Utils.eq(playerId, 6) ? '#0868ac' : 'white')))));
+};
+var _user$project$View$piecesPatterns = A2(
+	_elm_lang$core$List$map,
+	function (n) {
+		return A2(
+			_elm_lang$svg$Svg$pattern,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$id(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'piece',
+						_elm_lang$core$Basics$toString(n))),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$x('0%'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$y('0%'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$width('100%'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$height('100%'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 100 100'),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$image,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$x('10'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y('10'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$height('80'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$width('80'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$xlinkHref(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'/images/pieces/piece',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(n),
+													'.png'))),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			});
+	},
+	A2(_elm_lang$core$List$range, 0, 14));
+var _user$project$View$pieceSvg = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'value: ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(_p1.value),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'playerId: ',
+							_elm_lang$core$Basics$toString(_p1.playerId))))),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$View$deckHexaSvg = F4(
+	function (x, y, radius, _p2) {
+		var _p3 = _p2;
+		var _p11 = _p3.value;
+		var _p10 = _p3.playerId;
+		var points = A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (_p4, acc) {
+					var _p5 = _p4;
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						acc,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p5._0),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								', ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p5._1),
+									' '))));
+				}),
+			'',
+			A2(
+				_elm_lang$core$List$map,
+				function (_p6) {
+					var _p7 = _p6;
+					return {ctor: '_Tuple2', _0: _p7._0 + x, _1: _p7._1 + y};
+				},
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Basics$fromPolar,
+					A2(
+						_elm_lang$core$List$map,
+						function (_p8) {
+							var _p9 = _p8;
+							return {ctor: '_Tuple2', _0: _p9._0, _1: _p9._1 + (_elm_lang$core$Basics$pi / 6)};
+						},
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: radius, _1: 0},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: radius, _1: _elm_lang$core$Basics$pi / 3},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: radius, _1: (2 * _elm_lang$core$Basics$pi) / 3},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: radius, _1: _elm_lang$core$Basics$pi},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: radius, _1: (4 * _elm_lang$core$Basics$pi) / 3},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: radius, _1: (5 * _elm_lang$core$Basics$pi) / 3},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}))));
+		return {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$svg$Svg$polygon,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$fill(
+						_user$project$View$playerColor(_p10)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$points(points),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$polygon,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fill(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'url(#piece',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p11),
+									')'))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$stroke('black'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$strokeWidth('2px'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$points(points),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Events$onClick(
+											_user$project$Types$PickUpPiece(
+												A2(_user$project$Types$Piece, _p11, _p10))),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$svg$Svg_Attributes$cursor('pointer'),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			}
+		};
+	});
+var _user$project$View$deckSvg = function (model) {
+	var _p12 = A2(
+		_elm_lang$core$Maybe$andThen,
+		function (id) {
+			return A2(_elm_lang$core$Dict$get, id, model.players);
+		},
+		model.currentPlayer);
+	if (_p12.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$span,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		var _p15 = _p12._0.deck;
+		var def = A2(
+			_elm_lang$svg$Svg$defs,
+			{ctor: '[]'},
+			_user$project$View$piecesPatterns);
+		var l = 35;
+		var sizeY = 75;
+		var sizeX = 1000;
+		var nbrPieces = _elm_lang$core$List$length(_p15);
+		var offset = sizeX / _elm_lang$core$Basics$toFloat(nbrPieces);
+		var coords = A2(
+			_elm_lang$core$List$map,
+			function (n) {
+				return {
+					ctor: '_Tuple2',
+					_0: (_elm_lang$core$Basics$toFloat(n) * offset) + l,
+					_1: sizeY / 2
+				};
+			},
+			A2(_elm_lang$core$List$range, 0, nbrPieces - 1));
+		var pieces = A2(
+			_elm_lang$core$List$concatMap,
+			function (_p13) {
+				var _p14 = _p13;
+				return A4(_user$project$View$deckHexaSvg, _p14._0._0, _p14._0._1, l, _p14._1);
+			},
+			A3(
+				_elm_lang$core$List$map2,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				coords,
+				_p15));
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width('750'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$viewBox(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'0 0 ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(sizeX),
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									' ',
+									_elm_lang$core$Basics$toString(sizeY))))),
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '::', _0: def, _1: pieces});
+	}
+};
+var _user$project$View$hexaSvg = F6(
+	function (x, y, state, l, u, v) {
+		var offset = function (_p16) {
+			var _p17 = _p16;
+			return l - _p17._1;
+		}(
+			_elm_lang$core$Basics$fromPolar(
+				{ctor: '_Tuple2', _0: l, _1: _elm_lang$core$Basics$pi / 3}));
+		var radius = l + offset;
+		var points = A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (_p18, acc) {
+					var _p19 = _p18;
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						acc,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p19._0),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								', ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p19._1),
+									' '))));
+				}),
+			'',
+			A2(
+				_elm_lang$core$List$map,
+				function (_p20) {
+					var _p21 = _p20;
+					return {ctor: '_Tuple2', _0: _p21._0 + x, _1: _p21._1 + y};
+				},
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Basics$fromPolar,
+					A2(
+						_elm_lang$core$List$map,
+						function (_p22) {
+							var _p23 = _p22;
+							return {ctor: '_Tuple2', _0: _p23._0, _1: _p23._1 + (_elm_lang$core$Basics$pi / 6)};
+						},
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: radius, _1: 0},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: radius, _1: _elm_lang$core$Basics$pi / 3},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: radius, _1: (2 * _elm_lang$core$Basics$pi) / 3},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: radius, _1: _elm_lang$core$Basics$pi},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: radius, _1: (4 * _elm_lang$core$Basics$pi) / 3},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: radius, _1: (5 * _elm_lang$core$Basics$pi) / 3},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}))));
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			function () {
+				var _p24 = state;
+				if (_p24.ctor === 'Contain') {
+					return {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$polygon,
+							{
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$fill(
+									_user$project$View$playerColor(_p24._0.playerId)),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$points(points),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					};
+				} else {
+					return {ctor: '[]'};
+				}
+			}(),
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$polygon,
+					{
+						ctor: '::',
+						_0: function () {
+							var _p25 = state;
+							switch (_p25.ctor) {
+								case 'Empty':
+									return _elm_lang$svg$Svg_Attributes$fill('white');
+								case 'UnPlayable':
+									if (_p25._0.ctor === 'Grey') {
+										return _elm_lang$svg$Svg_Attributes$fill('grey');
+									} else {
+										return _elm_lang$svg$Svg_Attributes$fill(_p25._0._0);
+									}
+								default:
+									return _elm_lang$svg$Svg_Attributes$fill(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'url(#piece',
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$Basics$toString(_p25._0.value),
+												')')));
+							}
+						}(),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$stroke('black'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$strokeWidth('2px'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$points(points),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Events$onClick(
+											_user$project$Types$PutDownPiece(
+												{
+													ctor: '_Tuple2',
+													_0: _elm_lang$core$Basics$round(u),
+													_1: _elm_lang$core$Basics$round(v)
+												})),
+										_1: {
+											ctor: '::',
+											_0: function () {
+												var _p26 = state;
+												if (_p26.ctor === 'Empty') {
+													return _elm_lang$svg$Svg_Attributes$cursor('pointer');
+												} else {
+													return _elm_lang$svg$Svg_Attributes$cursor('default');
+												}
+											}(),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$View$hexaBoardSvg = F3(
+	function (n, l, board) {
+		var def = A2(
+			_elm_lang$svg$Svg$defs,
+			{ctor: '[]'},
+			_user$project$View$piecesPatterns);
+		var size = _elm_lang$core$Basics$toString(((l * 4) * n) + (2 * l));
+		var yOffset = F2(
+			function (x, y) {
+				return function (_p27) {
+					var _p28 = _p27;
+					return l - _p28._1;
+				}(
+					_elm_lang$core$Basics$fromPolar(
+						{ctor: '_Tuple2', _0: l, _1: _elm_lang$core$Basics$pi / 3}));
+			});
+		var offset = function (v) {
+			return (_elm_lang$core$Native_Utils.cmp(
+				v,
+				_elm_lang$core$Basics$toFloat(n) + 1) > -1) ? (v - n) : (n - v);
+		};
+		var adjust = function (v) {
+			return _elm_lang$core$Native_Utils.eq(
+				A2(
+					_elm_lang$core$Basics_ops['%'],
+					_elm_lang$core$Basics$round(v),
+					2),
+				0) ? 0 : 0;
+		};
+		var coords = A2(
+			_elm_lang$core$List$map,
+			function (_p29) {
+				var _p30 = _p29;
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Basics$toFloat(_p30._0),
+					_1: _elm_lang$core$Basics$toFloat(_p30._1),
+					_2: _p30._2
+				};
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (_p31) {
+					var _p32 = _p31;
+					return {ctor: '_Tuple3', _0: _p32.xPos, _1: _p32.yPos, _2: _p32.state};
+				},
+				_elm_lang$core$Dict$values(board)));
+		var cells = A2(
+			_elm_lang$core$List$concatMap,
+			function (_p33) {
+				var _p34 = _p33;
+				var _p36 = _p34._1;
+				var _p35 = _p34._0;
+				return A6(
+					_user$project$View$hexaSvg,
+					(l + ((_p35 * l) * 2)) + (offset(_p36) * l),
+					(((_p36 * 2) * l) + (2 * l)) - ((_p36 * 2) * A2(yOffset, _p35, _p36)),
+					_p34._2,
+					l,
+					_p35,
+					_p36);
+			},
+			coords);
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '700px'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'height', _1: '650px'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$svg,
+							{
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$width('700'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$height('700'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$viewBox(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'0 0 ',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													size,
+													A2(_elm_lang$core$Basics_ops['++'], ' ', size)))),
+										_1: {ctor: '[]'}
+									}
+								}
+							},
+							{ctor: '::', _0: def, _1: cells}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$View$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A3(_user$project$View$hexaBoardSvg, model.boardSize, 35, model.board),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$br,
+					{ctor: '[]'},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '750px'},
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '0.75em'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'player ',
+											A2(
+												_elm_lang$core$Maybe$withDefault,
+												'Error',
+												A2(
+													_elm_lang$core$Maybe$andThen,
+													function (_p37) {
+														return _elm_lang$core$Maybe$Just(
+															_elm_lang$core$Basics$toString(_p37));
+													},
+													model.currentPlayer)))),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _user$project$View$deckSvg(model),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};

@@ -1,0 +1,378 @@
+var _user$project$Main$color = function (n) {
+	var blue = (_elm_lang$core$Basics$sin(((4 * _elm_lang$core$Basics$pi) * n) / 3) * 127) + 128;
+	var green = (_elm_lang$core$Basics$sin(((2 * _elm_lang$core$Basics$pi) * n) / 3) * 127) + 128;
+	var red = (_elm_lang$core$Basics$sin(n) * 127) + 128;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'rgb(',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$round(red)),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				', ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						_elm_lang$core$Basics$round(green)),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						', ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(
+								_elm_lang$core$Basics$round(blue)),
+							')'))))));
+};
+var _user$project$Main$goAround = function (n) {
+	var range_ = F2(
+		function (a, b) {
+			return _elm_lang$core$List$reverse(
+				A2(_elm_lang$core$List$range, b, a));
+		});
+	var xs = A2(
+		_elm_lang$core$Basics_ops['++'],
+		A2(_elm_lang$core$List$range, 0, 2 * n),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(range_, (2 * n) - 1, 0),
+			A2(_elm_lang$core$List$repeat, (2 * n) - 1, 0)));
+	var ys = A2(
+		_elm_lang$core$Basics_ops['++'],
+		A2(_elm_lang$core$List$repeat, n, 0),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(_elm_lang$core$List$range, 0, 2 * n),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$List$repeat, n, 2 * n),
+				A2(range_, (2 * n) - 1, 1))));
+	return A3(
+		_elm_lang$core$List$map2,
+		F2(
+			function (v0, v1) {
+				return {ctor: '_Tuple2', _0: v0, _1: v1};
+			}),
+		xs,
+		ys);
+};
+var _user$project$Main$rainbowEdge = F2(
+	function (n, board) {
+		var cells = _user$project$Main$goAround(n);
+		var offset = (2 * _elm_lang$core$Basics$pi) / (_elm_lang$core$Basics$toFloat(n) * 6);
+		return _elm_lang$core$Tuple$second(
+			A3(
+				_elm_lang$core$List$foldr,
+				F2(
+					function (cell, _p0) {
+						var _p1 = _p0;
+						var _p5 = _p1._0;
+						return {
+							ctor: '_Tuple2',
+							_0: _p5 + offset,
+							_1: A3(
+								_elm_lang$core$Dict$update,
+								cell,
+								function (v) {
+									var _p2 = v;
+									if (_p2.ctor === 'Nothing') {
+										return _elm_lang$core$Maybe$Nothing;
+									} else {
+										var _p4 = _p2._0;
+										var _p3 = _p4.state;
+										if (_p3.ctor === 'UnPlayable') {
+											return _elm_lang$core$Maybe$Just(
+												_elm_lang$core$Native_Utils.update(
+													_p4,
+													{
+														state: _user$project$Types$UnPlayable(
+															_user$project$Types$Rainbow(
+																_user$project$Main$color(0.4 * _p5)))
+													}));
+										} else {
+											return _elm_lang$core$Maybe$Just(_p4);
+										}
+									}
+								},
+								_p1._1)
+						};
+					}),
+				{ctor: '_Tuple2', _0: 0, _1: board},
+				cells));
+	});
+var _user$project$Main$isEdge = F2(
+	function (n, _p6) {
+		var _p7 = _p6;
+		var _p9 = _p7.yPos;
+		var _p8 = _p7.xPos;
+		return _elm_lang$core$Native_Utils.eq(_p8, 0) || (_elm_lang$core$Native_Utils.eq(_p9, 0) || (_elm_lang$core$Native_Utils.eq(_p9, 2 * n) || (_elm_lang$core$Native_Utils.eq(_p8, n + _p9) || _elm_lang$core$Native_Utils.eq(_p8 + _p9, 3 * n))));
+	});
+var _user$project$Main$boardWithEdge = F2(
+	function (n, board) {
+		return A2(
+			_elm_lang$core$Dict$map,
+			F2(
+				function (key, cell) {
+					return _elm_lang$core$Native_Utils.update(
+						cell,
+						{
+							state: A2(_user$project$Main$isEdge, n, cell) ? _user$project$Types$UnPlayable(_user$project$Types$Grey) : cell.state
+						});
+				}),
+			board);
+	});
+var _user$project$Main$neighbours = F2(
+	function (j, i) {
+		return {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: j - 1, _1: i - 1},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: j, _1: i - 1},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: j - 1, _1: i},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: j + 1, _1: i},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: j, _1: i + 1},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: j + 1, _1: i + 1},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		};
+	});
+var _user$project$Main$hexaBoard = function (n) {
+	var makeRowBottom = function (i) {
+		return A2(
+			_elm_lang$core$List$map,
+			function (j) {
+				return {ctor: '_Tuple2', _0: j, _1: i};
+			},
+			A2(_elm_lang$core$List$range, 0, (2 * n) + (n - i)));
+	};
+	var bottomHalf = A2(
+		_elm_lang$core$List$concatMap,
+		makeRowBottom,
+		A2(_elm_lang$core$List$range, n + 1, 2 * n));
+	var makeRowTop = function (i) {
+		return A2(
+			_elm_lang$core$List$map,
+			function (j) {
+				return {ctor: '_Tuple2', _0: j, _1: i};
+			},
+			A2(_elm_lang$core$List$range, 0, n + i));
+	};
+	var topHalf = A2(
+		_elm_lang$core$List$concatMap,
+		makeRowTop,
+		A2(_elm_lang$core$List$range, 0, n));
+	return A3(
+		_elm_lang$core$List$foldr,
+		F2(
+			function (_p10, res) {
+				var _p11 = _p10;
+				var _p13 = _p11._1;
+				var _p12 = _p11._0;
+				return A3(
+					_elm_lang$core$Dict$insert,
+					{ctor: '_Tuple2', _0: _p12, _1: _p13},
+					A3(_user$project$Types$Cell, _p12, _p13, _user$project$Types$Empty),
+					res);
+			}),
+		_elm_lang$core$Dict$empty,
+		A2(_elm_lang$core$Basics_ops['++'], topHalf, bottomHalf));
+};
+var _user$project$Main$makePlayers = function (n) {
+	var makeDeck = function (id) {
+		return A2(
+			_elm_lang$core$List$map,
+			function (v) {
+				return A2(_user$project$Types$Piece, v, id);
+			},
+			A2(_elm_lang$core$List$range, 0, 14));
+	};
+	var makePlayer = function (id) {
+		return A3(
+			_user$project$Types$Player,
+			makeDeck(id),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'toto ',
+				_elm_lang$core$Basics$toString(id)),
+			id);
+	};
+	return A3(
+		_elm_lang$core$List$foldr,
+		F2(
+			function (p, res) {
+				return A3(_elm_lang$core$Dict$insert, p.id, p, res);
+			}),
+		_elm_lang$core$Dict$empty,
+		A2(
+			_elm_lang$core$List$map,
+			makePlayer,
+			A2(_elm_lang$core$List$range, 1, n)));
+};
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p14 = msg;
+		switch (_p14.ctor) {
+			case 'SetPlayerNumber':
+				var _p15 = _elm_lang$core$String$toInt(_p14._0);
+				if (_p15.ctor === 'Ok') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								players: _user$project$Main$makePlayers(_p15._0),
+								currentPlayer: _elm_lang$core$Maybe$Just(6)
+							}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'PickUpPiece':
+				var newPlayers = A3(
+					_elm_lang$core$Dict$update,
+					_p14._0.playerId,
+					function (mv) {
+						var _p16 = mv;
+						if (_p16.ctor === 'Nothing') {
+							return _elm_lang$core$Maybe$Nothing;
+						} else {
+							return _elm_lang$core$Maybe$Just(
+								_elm_lang$core$Native_Utils.update(
+									_p16._0,
+									{
+										deck: A2(
+											_elm_lang$core$List$filter,
+											function (p) {
+												return !_elm_lang$core$Native_Utils.eq(p.value, _p14._0.value);
+											},
+											_p16._0.deck)
+									}));
+						}
+					},
+					model.players);
+				var _p17 = model.currentPiece;
+				if (_p17.ctor === 'Nothing') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								currentPiece: _elm_lang$core$Maybe$Just(_p14._0),
+								players: newPlayers
+							}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			default:
+				var _p22 = _p14._0._1;
+				var _p21 = _p14._0._0;
+				var _p18 = {
+					ctor: '_Tuple2',
+					_0: model.currentPiece,
+					_1: A2(
+						_elm_lang$core$Dict$get,
+						{ctor: '_Tuple2', _0: _p21, _1: _p22},
+						model.board)
+				};
+				_v9_2:
+				do {
+					if (_p18.ctor === '_Tuple2') {
+						if (_p18._0.ctor === 'Nothing') {
+							return A2(
+								_elm_lang$core$Platform_Cmd_ops['!'],
+								model,
+								{ctor: '[]'});
+						} else {
+							if (_p18._1.ctor === 'Just') {
+								var _p20 = _p18._0._0.playerId;
+								var _p19 = _p18._1._0.state;
+								switch (_p19.ctor) {
+									case 'UnPlayable':
+										return A2(
+											_elm_lang$core$Platform_Cmd_ops['!'],
+											model,
+											{ctor: '[]'});
+									case 'Contain':
+										return A2(
+											_elm_lang$core$Platform_Cmd_ops['!'],
+											model,
+											{ctor: '[]'});
+									default:
+										var newCell = A3(
+											_user$project$Types$Cell,
+											_p21,
+											_p22,
+											_user$project$Types$Contain(_p18._0._0));
+										var newBoard = A3(
+											_elm_lang$core$Dict$insert,
+											{ctor: '_Tuple2', _0: _p21, _1: _p22},
+											newCell,
+											model.board);
+										return A2(
+											_elm_lang$core$Platform_Cmd_ops['!'],
+											_elm_lang$core$Native_Utils.update(
+												model,
+												{
+													board: newBoard,
+													currentPlayer: _elm_lang$core$Maybe$Just(
+														_elm_lang$core$Native_Utils.eq(
+															_p20,
+															_elm_lang$core$Dict$size(model.players)) ? 1 : (_p20 + 1)),
+													currentPiece: _elm_lang$core$Maybe$Nothing
+												}),
+											{ctor: '[]'});
+								}
+							} else {
+								break _v9_2;
+							}
+						}
+					} else {
+						break _v9_2;
+					}
+				} while(false);
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'});
+		}
+	});
+var _user$project$Main$n = 6;
+var _user$project$Main$init = A2(
+	_elm_lang$core$Platform_Cmd_ops['!'],
+	{
+		boardSize: _user$project$Main$n,
+		players: _user$project$Main$makePlayers(6),
+		board: A2(
+			_user$project$Main$boardWithEdge,
+			_user$project$Main$n,
+			_user$project$Main$hexaBoard(_user$project$Main$n)),
+		currentPlayer: _elm_lang$core$Maybe$Just(1),
+		currentPiece: _elm_lang$core$Maybe$Nothing
+	},
+	{ctor: '[]'});
+var _user$project$Main$main = _elm_lang$html$Html$program(
+	{init: _user$project$Main$init, view: _user$project$View$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
