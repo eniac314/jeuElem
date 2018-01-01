@@ -8601,17 +8601,17 @@ var _user$project$Types$Piece = F2(
 	function (a, b) {
 		return {value: a, playerId: b};
 	});
-var _user$project$Types$Player = F3(
-	function (a, b, c) {
-		return {deck: a, name: b, id: c};
+var _user$project$Types$Player = F5(
+	function (a, b, c, d, e) {
+		return {deck: a, name: b, id: c, choice: d, score: e};
 	});
 var _user$project$Types$Cell = F3(
 	function (a, b, c) {
 		return {xPos: a, yPos: b, state: c};
 	});
-var _user$project$Types$Model = F5(
-	function (a, b, c, d, e) {
-		return {boardSize: a, players: b, board: c, currentPlayer: d, currentPiece: e};
+var _user$project$Types$Model = F4(
+	function (a, b, c, d) {
+		return {boardSize: a, players: b, board: c, currentPlayer: d};
 	});
 var _user$project$Types$Empty = {ctor: 'Empty'};
 var _user$project$Types$Contain = function (a) {
@@ -8691,7 +8691,7 @@ var _user$project$View$piecesPatterns = A2(
 										_0: _elm_lang$svg$Svg_Attributes$xlinkHref(
 											A2(
 												_elm_lang$core$Basics_ops['++'],
-												'images/pieces/piece',
+												'../images/pieces/piece',
 												A2(
 													_elm_lang$core$Basics_ops['++'],
 													_elm_lang$core$Basics$toString(n),
@@ -8728,11 +8728,9 @@ var _user$project$View$pieceSvg = function (_p0) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$View$deckHexaSvg = F4(
-	function (x, y, radius, _p2) {
+var _user$project$View$selectedHexaSvg = F2(
+	function (radius, _p2) {
 		var _p3 = _p2;
-		var _p11 = _p3.value;
-		var _p10 = _p3.playerId;
 		var points = A3(
 			_elm_lang$core$List$foldr,
 			F2(
@@ -8757,7 +8755,7 @@ var _user$project$View$deckHexaSvg = F4(
 				_elm_lang$core$List$map,
 				function (_p6) {
 					var _p7 = _p6;
-					return {ctor: '_Tuple2', _0: _p7._0 + x, _1: _p7._1 + y};
+					return {ctor: '_Tuple2', _0: _p7._0 + 50, _1: _p7._1 + 50};
 				},
 				A2(
 					_elm_lang$core$List$map,
@@ -8800,7 +8798,7 @@ var _user$project$View$deckHexaSvg = F4(
 				{
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$fill(
-						_user$project$View$playerColor(_p10)),
+						_user$project$View$playerColor(_p3.playerId)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$points(points),
@@ -8820,7 +8818,214 @@ var _user$project$View$deckHexaSvg = F4(
 								'url(#piece',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p11),
+									_elm_lang$core$Basics$toString(_p3.value),
+									')'))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$stroke('black'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$strokeWidth('2px'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$points(points),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			}
+		};
+	});
+var _user$project$View$selectedSvg = function (model) {
+	var piece = A2(
+		_elm_lang$core$Maybe$andThen,
+		function (_) {
+			return _.choice;
+		},
+		A2(
+			_elm_lang$core$Maybe$andThen,
+			function (k) {
+				return A2(_elm_lang$core$Dict$get, k, model.players);
+			},
+			model.currentPlayer));
+	var _p10 = piece;
+	if (_p10.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '100px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'height', _1: '100px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border-style', _1: 'solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'border-color', _1: 'black'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{ctor: '[]'});
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '100px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'height', _1: '100px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border-style', _1: 'solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'border-color', _1: 'black'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$svg,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$width('100'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$height('100'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 100 100'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					A2(_user$project$View$selectedHexaSvg, 35, _p10._0)),
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _user$project$View$deckHexaSvg = F4(
+	function (x, y, radius, _p11) {
+		var _p12 = _p11;
+		var _p20 = _p12.value;
+		var _p19 = _p12.playerId;
+		var points = A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (_p13, acc) {
+					var _p14 = _p13;
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						acc,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p14._0),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								', ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p14._1),
+									' '))));
+				}),
+			'',
+			A2(
+				_elm_lang$core$List$map,
+				function (_p15) {
+					var _p16 = _p15;
+					return {ctor: '_Tuple2', _0: _p16._0 + x, _1: _p16._1 + y};
+				},
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Basics$fromPolar,
+					A2(
+						_elm_lang$core$List$map,
+						function (_p17) {
+							var _p18 = _p17;
+							return {ctor: '_Tuple2', _0: _p18._0, _1: _p18._1 + (_elm_lang$core$Basics$pi / 6)};
+						},
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: radius, _1: 0},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: radius, _1: _elm_lang$core$Basics$pi / 3},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: radius, _1: (2 * _elm_lang$core$Basics$pi) / 3},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: radius, _1: _elm_lang$core$Basics$pi},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: radius, _1: (4 * _elm_lang$core$Basics$pi) / 3},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: radius, _1: (5 * _elm_lang$core$Basics$pi) / 3},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}))));
+		return {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$svg$Svg$polygon,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$fill(
+						_user$project$View$playerColor(_p19)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$points(points),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$polygon,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fill(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'url(#piece',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p20),
 									')'))),
 						_1: {
 							ctor: '::',
@@ -8835,7 +9040,7 @@ var _user$project$View$deckHexaSvg = F4(
 										ctor: '::',
 										_0: _elm_lang$svg$Svg_Events$onClick(
 											_user$project$Types$PickUpPiece(
-												A2(_user$project$Types$Piece, _p11, _p10))),
+												A2(_user$project$Types$Piece, _p20, _p19))),
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$svg$Svg_Attributes$cursor('pointer'),
@@ -8852,19 +9057,19 @@ var _user$project$View$deckHexaSvg = F4(
 		};
 	});
 var _user$project$View$deckSvg = function (model) {
-	var _p12 = A2(
+	var _p21 = A2(
 		_elm_lang$core$Maybe$andThen,
 		function (id) {
 			return A2(_elm_lang$core$Dict$get, id, model.players);
 		},
 		model.currentPlayer);
-	if (_p12.ctor === 'Nothing') {
+	if (_p21.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$span,
 			{ctor: '[]'},
 			{ctor: '[]'});
 	} else {
-		var _p15 = _p12._0.deck;
+		var _p24 = _p21._0.deck;
 		var def = A2(
 			_elm_lang$svg$Svg$defs,
 			{ctor: '[]'},
@@ -8872,7 +9077,7 @@ var _user$project$View$deckSvg = function (model) {
 		var l = 35;
 		var sizeY = 75;
 		var sizeX = 1000;
-		var nbrPieces = _elm_lang$core$List$length(_p15);
+		var nbrPieces = _elm_lang$core$List$length(_p24);
 		var offset = sizeX / _elm_lang$core$Basics$toFloat(nbrPieces);
 		var coords = A2(
 			_elm_lang$core$List$map,
@@ -8886,9 +9091,9 @@ var _user$project$View$deckSvg = function (model) {
 			A2(_elm_lang$core$List$range, 0, nbrPieces - 1));
 		var pieces = A2(
 			_elm_lang$core$List$concatMap,
-			function (_p13) {
-				var _p14 = _p13;
-				return A4(_user$project$View$deckHexaSvg, _p14._0._0, _p14._0._1, l, _p14._1);
+			function (_p22) {
+				var _p23 = _p22;
+				return A4(_user$project$View$deckHexaSvg, _p23._0._0, _p23._0._1, l, _p23._1);
 			},
 			A3(
 				_elm_lang$core$List$map2,
@@ -8897,7 +9102,7 @@ var _user$project$View$deckSvg = function (model) {
 						return {ctor: '_Tuple2', _0: v0, _1: v1};
 					}),
 				coords,
-				_p15));
+				_p24));
 		return A2(
 			_elm_lang$svg$Svg$svg,
 			{
@@ -8924,9 +9129,9 @@ var _user$project$View$deckSvg = function (model) {
 };
 var _user$project$View$hexaSvg = F6(
 	function (x, y, state, l, u, v) {
-		var offset = function (_p16) {
-			var _p17 = _p16;
-			return l - _p17._1;
+		var offset = function (_p25) {
+			var _p26 = _p25;
+			return l - _p26._1;
 		}(
 			_elm_lang$core$Basics$fromPolar(
 				{ctor: '_Tuple2', _0: l, _1: _elm_lang$core$Basics$pi / 3}));
@@ -8934,37 +9139,37 @@ var _user$project$View$hexaSvg = F6(
 		var points = A3(
 			_elm_lang$core$List$foldr,
 			F2(
-				function (_p18, acc) {
-					var _p19 = _p18;
+				function (_p27, acc) {
+					var _p28 = _p27;
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						acc,
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p19._0),
+							_elm_lang$core$Basics$toString(_p28._0),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p19._1),
+									_elm_lang$core$Basics$toString(_p28._1),
 									' '))));
 				}),
 			'',
 			A2(
 				_elm_lang$core$List$map,
-				function (_p20) {
-					var _p21 = _p20;
-					return {ctor: '_Tuple2', _0: _p21._0 + x, _1: _p21._1 + y};
+				function (_p29) {
+					var _p30 = _p29;
+					return {ctor: '_Tuple2', _0: _p30._0 + x, _1: _p30._1 + y};
 				},
 				A2(
 					_elm_lang$core$List$map,
 					_elm_lang$core$Basics$fromPolar,
 					A2(
 						_elm_lang$core$List$map,
-						function (_p22) {
-							var _p23 = _p22;
-							return {ctor: '_Tuple2', _0: _p23._0, _1: _p23._1 + (_elm_lang$core$Basics$pi / 6)};
+						function (_p31) {
+							var _p32 = _p31;
+							return {ctor: '_Tuple2', _0: _p32._0, _1: _p32._1 + (_elm_lang$core$Basics$pi / 6)};
 						},
 						{
 							ctor: '::',
@@ -8994,8 +9199,8 @@ var _user$project$View$hexaSvg = F6(
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			function () {
-				var _p24 = state;
-				if (_p24.ctor === 'Contain') {
+				var _p33 = state;
+				if (_p33.ctor === 'Contain') {
 					return {
 						ctor: '::',
 						_0: A2(
@@ -9003,7 +9208,7 @@ var _user$project$View$hexaSvg = F6(
 							{
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$fill(
-									_user$project$View$playerColor(_p24._0.playerId)),
+									_user$project$View$playerColor(_p33._0.playerId)),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$svg$Svg_Attributes$points(points),
@@ -9024,15 +9229,15 @@ var _user$project$View$hexaSvg = F6(
 					{
 						ctor: '::',
 						_0: function () {
-							var _p25 = state;
-							switch (_p25.ctor) {
+							var _p34 = state;
+							switch (_p34.ctor) {
 								case 'Empty':
 									return _elm_lang$svg$Svg_Attributes$fill('white');
 								case 'UnPlayable':
-									if (_p25._0.ctor === 'Grey') {
+									if (_p34._0.ctor === 'Grey') {
 										return _elm_lang$svg$Svg_Attributes$fill('grey');
 									} else {
-										return _elm_lang$svg$Svg_Attributes$fill(_p25._0._0);
+										return _elm_lang$svg$Svg_Attributes$fill(_p34._0._0);
 									}
 								default:
 									return _elm_lang$svg$Svg_Attributes$fill(
@@ -9041,7 +9246,7 @@ var _user$project$View$hexaSvg = F6(
 											'url(#piece',
 											A2(
 												_elm_lang$core$Basics_ops['++'],
-												_elm_lang$core$Basics$toString(_p25._0.value),
+												_elm_lang$core$Basics$toString(_p34._0.value),
 												')')));
 							}
 						}(),
@@ -9066,8 +9271,8 @@ var _user$project$View$hexaSvg = F6(
 										_1: {
 											ctor: '::',
 											_0: function () {
-												var _p26 = state;
-												if (_p26.ctor === 'Empty') {
+												var _p35 = state;
+												if (_p35.ctor === 'Empty') {
 													return _elm_lang$svg$Svg_Attributes$cursor('pointer');
 												} else {
 													return _elm_lang$svg$Svg_Attributes$cursor('default');
@@ -9093,9 +9298,9 @@ var _user$project$View$hexaBoardSvg = F3(
 		var size = _elm_lang$core$Basics$toString(((l * 4) * n) + (2 * l));
 		var yOffset = F2(
 			function (x, y) {
-				return function (_p27) {
-					var _p28 = _p27;
-					return l - _p28._1;
+				return function (_p36) {
+					var _p37 = _p36;
+					return l - _p37._1;
 				}(
 					_elm_lang$core$Basics$fromPolar(
 						{ctor: '_Tuple2', _0: l, _1: _elm_lang$core$Basics$pi / 3}));
@@ -9115,36 +9320,36 @@ var _user$project$View$hexaBoardSvg = F3(
 		};
 		var coords = A2(
 			_elm_lang$core$List$map,
-			function (_p29) {
-				var _p30 = _p29;
+			function (_p38) {
+				var _p39 = _p38;
 				return {
 					ctor: '_Tuple3',
-					_0: _elm_lang$core$Basics$toFloat(_p30._0),
-					_1: _elm_lang$core$Basics$toFloat(_p30._1),
-					_2: _p30._2
+					_0: _elm_lang$core$Basics$toFloat(_p39._0),
+					_1: _elm_lang$core$Basics$toFloat(_p39._1),
+					_2: _p39._2
 				};
 			},
 			A2(
 				_elm_lang$core$List$map,
-				function (_p31) {
-					var _p32 = _p31;
-					return {ctor: '_Tuple3', _0: _p32.xPos, _1: _p32.yPos, _2: _p32.state};
+				function (_p40) {
+					var _p41 = _p40;
+					return {ctor: '_Tuple3', _0: _p41.xPos, _1: _p41.yPos, _2: _p41.state};
 				},
 				_elm_lang$core$Dict$values(board)));
 		var cells = A2(
 			_elm_lang$core$List$concatMap,
-			function (_p33) {
-				var _p34 = _p33;
-				var _p36 = _p34._1;
-				var _p35 = _p34._0;
+			function (_p42) {
+				var _p43 = _p42;
+				var _p45 = _p43._1;
+				var _p44 = _p43._0;
 				return A6(
 					_user$project$View$hexaSvg,
-					(l + ((_p35 * l) * 2)) + (offset(_p36) * l),
-					(((_p36 * 2) * l) + (2 * l)) - ((_p36 * 2) * A2(yOffset, _p35, _p36)),
-					_p34._2,
+					(l + ((_p44 * l) * 2)) + (offset(_p45) * l),
+					(((_p45 * 2) * l) + (2 * l)) - ((_p45 * 2) * A2(yOffset, _p44, _p45)),
+					_p43._2,
 					l,
-					_p35,
-					_p36);
+					_p44,
+					_p45);
 			},
 			coords);
 		return A2(
@@ -9276,9 +9481,9 @@ var _user$project$View$view = function (model) {
 												'Error',
 												A2(
 													_elm_lang$core$Maybe$andThen,
-													function (_p37) {
+													function (_p46) {
 														return _elm_lang$core$Maybe$Just(
-															_elm_lang$core$Basics$toString(_p37));
+															_elm_lang$core$Basics$toString(_p46));
 													},
 													model.currentPlayer)))),
 									_1: {ctor: '[]'}
@@ -9289,7 +9494,31 @@ var _user$project$View$view = function (model) {
 								_1: {ctor: '[]'}
 							}
 						}),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '0.75em'},
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _user$project$View$selectedSvg(model),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
@@ -9497,14 +9726,16 @@ var _user$project$Main$makePlayers = function (n) {
 			A2(_elm_lang$core$List$range, 0, 14));
 	};
 	var makePlayer = function (id) {
-		return A3(
+		return A5(
 			_user$project$Types$Player,
 			makeDeck(id),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'toto ',
 				_elm_lang$core$Basics$toString(id)),
-			id);
+			id,
+			_elm_lang$core$Maybe$Nothing,
+			0);
 	};
 	return A3(
 		_elm_lang$core$List$foldr,
@@ -9544,38 +9775,42 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'PickUpPiece':
-				var newPlayers = A3(
-					_elm_lang$core$Dict$update,
-					_p14._0.playerId,
-					function (mv) {
-						var _p16 = mv;
-						if (_p16.ctor === 'Nothing') {
-							return _elm_lang$core$Maybe$Nothing;
-						} else {
-							return _elm_lang$core$Maybe$Just(
-								_elm_lang$core$Native_Utils.update(
-									_p16._0,
-									{
-										deck: A2(
-											_elm_lang$core$List$filter,
-											function (p) {
-												return !_elm_lang$core$Native_Utils.eq(p.value, _p14._0.value);
-											},
-											_p16._0.deck)
-									}));
-						}
+				var _p18 = _p14._0.playerId;
+				var _p16 = A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.choice;
 					},
-					model.players);
-				var _p17 = model.currentPiece;
-				if (_p17.ctor === 'Nothing') {
+					A2(_elm_lang$core$Dict$get, _p18, model.players));
+				if (_p16.ctor === 'Nothing') {
+					var newPlayers = A3(
+						_elm_lang$core$Dict$update,
+						_p18,
+						function (mv) {
+							var _p17 = mv;
+							if (_p17.ctor === 'Nothing') {
+								return _elm_lang$core$Maybe$Nothing;
+							} else {
+								return _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Native_Utils.update(
+										_p17._0,
+										{
+											deck: A2(
+												_elm_lang$core$List$filter,
+												function (p) {
+													return !_elm_lang$core$Native_Utils.eq(p.value, _p14._0.value);
+												},
+												_p17._0.deck),
+											choice: _elm_lang$core$Maybe$Just(_p14._0)
+										}));
+							}
+						},
+						model.players);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{
-								currentPiece: _elm_lang$core$Maybe$Just(_p14._0),
-								players: newPlayers
-							}),
+							{players: newPlayers}),
 						{ctor: '[]'});
 				} else {
 					return A2(
@@ -9584,29 +9819,40 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			default:
-				var _p22 = _p14._0._1;
-				var _p21 = _p14._0._0;
-				var _p18 = {
+				var _p24 = _p14._0._1;
+				var _p23 = _p14._0._0;
+				var currentPiece = A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.choice;
+					},
+					A2(
+						_elm_lang$core$Maybe$andThen,
+						function (k) {
+							return A2(_elm_lang$core$Dict$get, k, model.players);
+						},
+						model.currentPlayer));
+				var _p19 = {
 					ctor: '_Tuple2',
-					_0: model.currentPiece,
+					_0: currentPiece,
 					_1: A2(
 						_elm_lang$core$Dict$get,
-						{ctor: '_Tuple2', _0: _p21, _1: _p22},
+						{ctor: '_Tuple2', _0: _p23, _1: _p24},
 						model.board)
 				};
 				_v9_2:
 				do {
-					if (_p18.ctor === '_Tuple2') {
-						if (_p18._0.ctor === 'Nothing') {
+					if (_p19.ctor === '_Tuple2') {
+						if (_p19._0.ctor === 'Nothing') {
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								model,
 								{ctor: '[]'});
 						} else {
-							if (_p18._1.ctor === 'Just') {
-								var _p20 = _p18._0._0.playerId;
-								var _p19 = _p18._1._0.state;
-								switch (_p19.ctor) {
+							if (_p19._1.ctor === 'Just') {
+								var _p22 = _p19._0._0.playerId;
+								var _p20 = _p19._1._0.state;
+								switch (_p20.ctor) {
 									case 'UnPlayable':
 										return A2(
 											_elm_lang$core$Platform_Cmd_ops['!'],
@@ -9618,14 +9864,29 @@ var _user$project$Main$update = F2(
 											model,
 											{ctor: '[]'});
 									default:
+										var newPlayers = A3(
+											_elm_lang$core$Dict$update,
+											_p22,
+											function (mv) {
+												var _p21 = mv;
+												if (_p21.ctor === 'Nothing') {
+													return _elm_lang$core$Maybe$Nothing;
+												} else {
+													return _elm_lang$core$Maybe$Just(
+														_elm_lang$core$Native_Utils.update(
+															_p21._0,
+															{choice: _elm_lang$core$Maybe$Nothing}));
+												}
+											},
+											model.players);
 										var newCell = A3(
 											_user$project$Types$Cell,
-											_p21,
-											_p22,
-											_user$project$Types$Contain(_p18._0._0));
+											_p23,
+											_p24,
+											_user$project$Types$Contain(_p19._0._0));
 										var newBoard = A3(
 											_elm_lang$core$Dict$insert,
-											{ctor: '_Tuple2', _0: _p21, _1: _p22},
+											{ctor: '_Tuple2', _0: _p23, _1: _p24},
 											newCell,
 											model.board);
 										return A2(
@@ -9634,11 +9895,11 @@ var _user$project$Main$update = F2(
 												model,
 												{
 													board: newBoard,
+													players: newPlayers,
 													currentPlayer: _elm_lang$core$Maybe$Just(
 														_elm_lang$core$Native_Utils.eq(
-															_p20,
-															_elm_lang$core$Dict$size(model.players)) ? 1 : (_p20 + 1)),
-													currentPiece: _elm_lang$core$Maybe$Nothing
+															_p22,
+															_elm_lang$core$Dict$size(model.players)) ? 1 : (_p22 + 1))
 												}),
 											{ctor: '[]'});
 								}
@@ -9666,8 +9927,7 @@ var _user$project$Main$init = A2(
 			_user$project$Main$boardWithEdge,
 			_user$project$Main$n,
 			_user$project$Main$hexaBoard(_user$project$Main$n)),
-		currentPlayer: _elm_lang$core$Maybe$Just(1),
-		currentPiece: _elm_lang$core$Maybe$Nothing
+		currentPlayer: _elm_lang$core$Maybe$Just(1)
 	},
 	{ctor: '[]'});
 var _user$project$Main$main = _elm_lang$html$Html$program(
