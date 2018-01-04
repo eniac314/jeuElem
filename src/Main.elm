@@ -22,12 +22,14 @@ n =
 
 init =
     { boardSize = n
-    , players = makePlayers 6
+    , nbrPlayers = 0
+    , players = Dict.empty
     , board =
         boardWithEdge n (hexaBoard n)
 
     --|> rainbowEdge n
-    , currentPlayer = Just 1
+    , currentPlayer = Nothing
+    , position = Config
     }
         ! []
 
@@ -38,10 +40,18 @@ update msg model =
         SetPlayerNumber n ->
             case String.toInt n of
                 Ok n ->
-                    { model | players = makePlayers n, currentPlayer = Just 6 } ! []
+                    { model | nbrPlayers = n } ! []
 
                 Err _ ->
                     model ! []
+
+        InitializePlayers ->
+            { model
+                | players = makePlayers model.nbrPlayers
+                , currentPlayer = Just 1
+                , position = PieceSelection
+            }
+                ! []
 
         PickUpPiece ({ value, playerId } as piece) ->
             case
@@ -66,13 +76,19 @@ update msg model =
                                 )
                                 model.players
                     in
-                    { model
-                        | players = newPlayers
-                    }
-                        ! []
+                        { model
+                            | players = newPlayers
+                            , currentPlayer =
+                                Just <|
+                                    if playerId == Dict.size model.players then
+                                        1
+                                    else
+                                        playerId + 1
+                        }
+                            ! []
 
                 _ ->
-                    model ! []
+                    { model | position = TurnSelection } ! []
 
         PutDownPiece ( xPos, yPos ) ->
             let
@@ -84,55 +100,55 @@ update msg model =
                             )
                         |> Maybe.andThen .choice
             in
-            case ( currentPiece, Dict.get ( xPos, yPos ) model.board ) of
-                ( Nothing, _ ) ->
-                    model ! []
+                case ( currentPiece, Dict.get ( xPos, yPos ) model.board, model.position ) of
+                    ( Nothing, _, _ ) ->
+                        model ! []
 
-                ( Just ({ value, playerId } as piece), Just cell ) ->
-                    case cell.state of
-                        UnPlayable _ ->
-                            model ! []
+                    ( Just ({ value, playerId } as piece), Just cell, Playing ) ->
+                        case cell.state of
+                            UnPlayable _ ->
+                                model ! []
 
-                        Contain _ ->
-                            model ! []
+                            Contain _ ->
+                                model ! []
 
-                        _ ->
-                            let
-                                newCell =
-                                    Cell xPos yPos (Contain piece)
+                            _ ->
+                                let
+                                    newCell =
+                                        Cell xPos yPos (Contain piece)
 
-                                newBoard =
-                                    Dict.insert ( xPos, yPos ) newCell model.board
+                                    newBoard =
+                                        Dict.insert ( xPos, yPos ) newCell model.board
 
-                                newPlayers =
-                                    Dict.update playerId
-                                        (\mv ->
-                                            case mv of
-                                                Nothing ->
-                                                    Nothing
+                                    newPlayers =
+                                        Dict.update playerId
+                                            (\mv ->
+                                                case mv of
+                                                    Nothing ->
+                                                        Nothing
 
-                                                Just ({ deck, name, id } as player) ->
-                                                    Just
-                                                        { player
-                                                            | choice = Nothing
-                                                        }
-                                        )
-                                        model.players
-                            in
-                            { model
-                                | board = newBoard
-                                , players = newPlayers
-                                , currentPlayer =
-                                    Just <|
-                                        if playerId == Dict.size model.players then
-                                            1
-                                        else
-                                            playerId + 1
-                            }
-                                ! []
+                                                    Just ({ deck, name, id } as player) ->
+                                                        Just
+                                                            { player
+                                                                | choice = Nothing
+                                                            }
+                                            )
+                                            model.players
+                                in
+                                    { model
+                                        | board = newBoard
+                                        , players = newPlayers
+                                        , currentPlayer =
+                                            Just <|
+                                                if playerId == Dict.size model.players then
+                                                    1
+                                                else
+                                                    playerId + 1
+                                    }
+                                        ! []
 
-                _ ->
-                    model ! []
+                    _ ->
+                        model ! []
 
 
 subscriptions model =
@@ -148,8 +164,8 @@ makePlayers n =
         makePlayer id =
             Player (makeDeck id) ("toto " ++ toString id) id Nothing 0
     in
-    List.map makePlayer (List.range 1 n)
-        |> List.foldr (\p res -> Dict.insert p.id p res) Dict.empty
+        List.map makePlayer (List.range 1 n)
+            |> List.foldr (\p res -> Dict.insert p.id p res) Dict.empty
 
 
 hexaBoard : Int -> Board
@@ -167,12 +183,12 @@ hexaBoard n =
         bottomHalf =
             List.concatMap makeRowBottom (List.range (n + 1) (2 * n))
     in
-    (topHalf ++ bottomHalf)
-        |> List.foldr
-            (\( x, y ) res ->
-                Dict.insert ( x, y ) (Cell x y Empty) res
-            )
-            Dict.empty
+        (topHalf ++ bottomHalf)
+            |> List.foldr
+                (\( x, y ) res ->
+                    Dict.insert ( x, y ) (Cell x y Empty) res
+                )
+                Dict.empty
 
 
 neighbours : Int -> Int -> List ( Int, Int )
@@ -223,29 +239,29 @@ rainbowEdge n board =
         cells =
             goAround n
     in
-    List.foldr
-        (\cell ( n, acc ) ->
-            ( n + offset
-            , Dict.update cell
-                (\v ->
-                    case v of
-                        Nothing ->
-                            Nothing
+        List.foldr
+            (\cell ( n, acc ) ->
+                ( n + offset
+                , Dict.update cell
+                    (\v ->
+                        case v of
+                            Nothing ->
+                                Nothing
 
-                        Just cell_ ->
-                            case cell_.state of
-                                UnPlayable _ ->
-                                    Just { cell_ | state = UnPlayable (Rainbow (color (0.4 * n))) }
+                            Just cell_ ->
+                                case cell_.state of
+                                    UnPlayable _ ->
+                                        Just { cell_ | state = UnPlayable (Rainbow (color (0.4 * n))) }
 
-                                _ ->
-                                    Just cell_
+                                    _ ->
+                                        Just cell_
+                    )
+                    acc
                 )
-                acc
             )
-        )
-        ( 0, board )
-        cells
-        |> Tuple.second
+            ( 0, board )
+            cells
+            |> Tuple.second
 
 
 goAround n =
@@ -260,7 +276,7 @@ goAround n =
         ys =
             List.repeat n 0 ++ List.range 0 (2 * n) ++ List.repeat n (2 * n) ++ range_ (2 * n - 1) 1
     in
-    List.map2 (,) xs ys
+        List.map2 (,) xs ys
 
 
 color n =
@@ -274,4 +290,4 @@ color n =
         blue =
             sin (4 * pi * n / 3) * 127 + 128
     in
-    "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"
+        "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"

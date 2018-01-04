@@ -10,10 +10,15 @@ var _user$project$Types$Cell = F3(
 	function (a, b, c) {
 		return {xPos: a, yPos: b, state: c};
 	});
-var _user$project$Types$Model = F4(
-	function (a, b, c, d) {
-		return {boardSize: a, players: b, board: c, currentPlayer: d};
+var _user$project$Types$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {boardSize: a, nbrPlayers: b, players: c, board: d, currentPlayer: e, position: f};
 	});
+var _user$project$Types$EndGame = {ctor: 'EndGame'};
+var _user$project$Types$Playing = {ctor: 'Playing'};
+var _user$project$Types$TurnSelection = {ctor: 'TurnSelection'};
+var _user$project$Types$PieceSelection = {ctor: 'PieceSelection'};
+var _user$project$Types$Config = {ctor: 'Config'};
 var _user$project$Types$Empty = {ctor: 'Empty'};
 var _user$project$Types$Contain = function (a) {
 	return {ctor: 'Contain', _0: a};
@@ -31,6 +36,7 @@ var _user$project$Types$PutDownPiece = function (a) {
 var _user$project$Types$PickUpPiece = function (a) {
 	return {ctor: 'PickUpPiece', _0: a};
 };
+var _user$project$Types$InitializePlayers = {ctor: 'InitializePlayers'};
 var _user$project$Types$SetPlayerNumber = function (a) {
 	return {ctor: 'SetPlayerNumber', _0: a};
 };

@@ -11,6 +11,38 @@ import Types exposing (..)
 
 
 view model =
+    case model.position of
+        Config ->
+            configView model
+
+        TurnSelection ->
+            turnSelectionView model
+
+        _ ->
+            boardView model
+
+
+configView model =
+    div []
+        [ label [ Attr.for "nbrPLayerInput" ]
+            [ Html.text "How many players?" ]
+        , br [] []
+        , Html.input
+            [ Attr.id "nbrPLayerInput"
+            , onInput SetPlayerNumber
+            ]
+            []
+        , br [] []
+        , button [ onClick InitializePlayers ]
+            [ Html.text "Go" ]
+        ]
+
+
+turnSelectionView model =
+    span [] []
+
+
+boardView model =
     div [ Attr.style [ ( "width", "100%" ) ] ]
         [ hexaBoardSvg model.boardSize 35 model.board
         , br [] []
@@ -296,13 +328,15 @@ hexaBoardSvg n l board =
                 [ ( "margin", "auto" )
 
                 --, ( "background-color", "red" )
-                , ( "width", "700px" )
-                , ( "height", "650px" )
+                , ( "width", "50%" )
+                , ( "max-width", "700px" )
+
+                --, ( "height", "650px" )
                 ]
             ]
             [ svg
-                [ SvgAttr.width "700"
-                , SvgAttr.height "700"
+                [ SvgAttr.width "100%"
+                , SvgAttr.height "100%"
                 , SvgAttr.viewBox <| "0 0 " ++ size ++ " " ++ size
                 ]
                 (def :: cells)

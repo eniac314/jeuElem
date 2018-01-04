@@ -56,7 +56,7 @@ var _user$project$View$piecesPatterns = A2(
 										_0: _elm_lang$svg$Svg_Attributes$xlinkHref(
 											A2(
 												_elm_lang$core$Basics_ops['++'],
-												'../images/pieces/piece',
+												'images/pieces/piece',
 												A2(
 													_elm_lang$core$Basics_ops['++'],
 													_elm_lang$core$Basics$toString(n),
@@ -741,10 +741,10 @@ var _user$project$View$hexaBoardSvg = F3(
 								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'width', _1: '700px'},
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '50%'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'height', _1: '650px'},
+										_0: {ctor: '_Tuple2', _0: 'max-width', _1: '700px'},
 										_1: {ctor: '[]'}
 									}
 								}
@@ -757,10 +757,10 @@ var _user$project$View$hexaBoardSvg = F3(
 							_elm_lang$svg$Svg$svg,
 							{
 								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$width('700'),
+								_0: _elm_lang$svg$Svg_Attributes$width('100%'),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$height('700'),
+									_0: _elm_lang$svg$Svg_Attributes$height('100%'),
 									_1: {
 										ctor: '::',
 										_0: _elm_lang$svg$Svg_Attributes$viewBox(
@@ -781,7 +781,7 @@ var _user$project$View$hexaBoardSvg = F3(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$View$view = function (model) {
+var _user$project$View$boardView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -887,4 +887,86 @@ var _user$project$View$view = function (model) {
 				}
 			}
 		});
+};
+var _user$project$View$turnSelectionView = function (model) {
+	return A2(
+		_elm_lang$html$Html$span,
+		{ctor: '[]'},
+		{ctor: '[]'});
+};
+var _user$project$View$configView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$label,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$for('nbrPLayerInput'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('How many players?'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$br,
+					{ctor: '[]'},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$id('nbrPLayerInput'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$SetPlayerNumber),
+								_1: {ctor: '[]'}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$br,
+							{ctor: '[]'},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$InitializePlayers),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Go'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$View$view = function (model) {
+	var _p47 = model.position;
+	switch (_p47.ctor) {
+		case 'Config':
+			return _user$project$View$configView(model);
+		case 'TurnSelection':
+			return _user$project$View$turnSelectionView(model);
+		default:
+			return _user$project$View$boardView(model);
+	}
 };

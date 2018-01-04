@@ -238,10 +238,7 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{
-								players: _user$project$Main$makePlayers(_p15._0),
-								currentPlayer: _elm_lang$core$Maybe$Just(6)
-							}),
+							{nbrPlayers: _p15._0}),
 						{ctor: '[]'});
 				} else {
 					return A2(
@@ -249,6 +246,17 @@ var _user$project$Main$update = F2(
 						model,
 						{ctor: '[]'});
 				}
+			case 'InitializePlayers':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							players: _user$project$Main$makePlayers(model.nbrPlayers),
+							currentPlayer: _elm_lang$core$Maybe$Just(1),
+							position: _user$project$Types$PieceSelection
+						}),
+					{ctor: '[]'});
 			case 'PickUpPiece':
 				var _p18 = _p14._0.playerId;
 				var _p16 = A2(
@@ -285,12 +293,20 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{players: newPlayers}),
+							{
+								players: newPlayers,
+								currentPlayer: _elm_lang$core$Maybe$Just(
+									_elm_lang$core$Native_Utils.eq(
+										_p18,
+										_elm_lang$core$Dict$size(model.players)) ? 1 : (_p18 + 1))
+							}),
 						{ctor: '[]'});
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{position: _user$project$Types$TurnSelection}),
 						{ctor: '[]'});
 				}
 			default:
@@ -308,23 +324,24 @@ var _user$project$Main$update = F2(
 						},
 						model.currentPlayer));
 				var _p19 = {
-					ctor: '_Tuple2',
+					ctor: '_Tuple3',
 					_0: currentPiece,
 					_1: A2(
 						_elm_lang$core$Dict$get,
 						{ctor: '_Tuple2', _0: _p23, _1: _p24},
-						model.board)
+						model.board),
+					_2: model.position
 				};
 				_v9_2:
 				do {
-					if (_p19.ctor === '_Tuple2') {
+					if (_p19.ctor === '_Tuple3') {
 						if (_p19._0.ctor === 'Nothing') {
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								model,
 								{ctor: '[]'});
 						} else {
-							if (_p19._1.ctor === 'Just') {
+							if ((_p19._1.ctor === 'Just') && (_p19._2.ctor === 'Playing')) {
 								var _p22 = _p19._0._0.playerId;
 								var _p20 = _p19._1._0.state;
 								switch (_p20.ctor) {
@@ -397,12 +414,14 @@ var _user$project$Main$init = A2(
 	_elm_lang$core$Platform_Cmd_ops['!'],
 	{
 		boardSize: _user$project$Main$n,
-		players: _user$project$Main$makePlayers(6),
+		nbrPlayers: 0,
+		players: _elm_lang$core$Dict$empty,
 		board: A2(
 			_user$project$Main$boardWithEdge,
 			_user$project$Main$n,
 			_user$project$Main$hexaBoard(_user$project$Main$n)),
-		currentPlayer: _elm_lang$core$Maybe$Just(1)
+		currentPlayer: _elm_lang$core$Maybe$Nothing,
+		position: _user$project$Types$Config
 	},
 	{ctor: '[]'});
 var _user$project$Main$main = _elm_lang$html$Html$program(

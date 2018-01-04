@@ -7,6 +7,14 @@ type alias Board =
     Dict ( Int, Int ) Cell
 
 
+type Position
+    = Config
+    | PieceSelection
+    | TurnSelection
+    | Playing
+    | EndGame
+
+
 type CellState
     = UnPlayable Col
     | Contain Piece
@@ -42,13 +50,16 @@ type alias Cell =
 
 type alias Model =
     { boardSize : Int
+    , nbrPlayers : Int
     , players : Dict Int Player
     , board : Board
     , currentPlayer : Maybe Int
+    , position : Position
     }
 
 
 type Msg
     = SetPlayerNumber String
+    | InitializePlayers
     | PickUpPiece Piece
     | PutDownPiece ( Int, Int )
