@@ -122,6 +122,18 @@ var _user$project$Main$boardWithEdge = F2(
 				}),
 			board);
 	});
+var _user$project$Main$shifumi = F2(
+	function (piece1, piece2) {
+		var val2 = piece2.value;
+		var val1 = piece1.value;
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			A2(
+				_elm_lang$core$Dict$get,
+				{ctor: '_Tuple2', _0: val1, _1: val2},
+				_user$project$Data$shifumiTable));
+	});
 var _user$project$Main$neighbours = F2(
 	function (j, i) {
 		return {
@@ -201,7 +213,7 @@ var _user$project$Main$makePlayers = function (n) {
 			A2(_elm_lang$core$List$range, 0, 14));
 	};
 	var makePlayer = function (id) {
-		return A5(
+		return A6(
 			_user$project$Types$Player,
 			makeDeck(id),
 			A2(
@@ -209,6 +221,7 @@ var _user$project$Main$makePlayers = function (n) {
 				'toto ',
 				_elm_lang$core$Basics$toString(id)),
 			id,
+			_elm_lang$core$Maybe$Nothing,
 			_elm_lang$core$Maybe$Nothing,
 			0);
 	};
@@ -254,21 +267,23 @@ var _user$project$Main$update = F2(
 						{
 							players: _user$project$Main$makePlayers(model.nbrPlayers),
 							currentPlayer: _elm_lang$core$Maybe$Just(1),
-							position: _user$project$Types$PieceSelection
+							position: _user$project$Types$PieceSelection,
+							availableTurns: _elm_lang$core$Set$fromList(
+								A2(_elm_lang$core$List$range, 1, model.nbrPlayers))
 						}),
 					{ctor: '[]'});
 			case 'PickUpPiece':
-				var _p18 = _p14._0.playerId;
+				var _p19 = _p14._0.playerId;
 				var _p16 = A2(
 					_elm_lang$core$Maybe$andThen,
 					function (_) {
 						return _.choice;
 					},
-					A2(_elm_lang$core$Dict$get, _p18, model.players));
+					A2(_elm_lang$core$Dict$get, _p19, model.players));
 				if (_p16.ctor === 'Nothing') {
 					var newPlayers = A3(
 						_elm_lang$core$Dict$update,
-						_p18,
+						_p19,
 						function (mv) {
 							var _p17 = mv;
 							if (_p17.ctor === 'Nothing') {
@@ -289,29 +304,186 @@ var _user$project$Main$update = F2(
 							}
 						},
 						model.players);
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								players: newPlayers,
-								currentPlayer: _elm_lang$core$Maybe$Just(
-									_elm_lang$core$Native_Utils.eq(
-										_p18,
-										_elm_lang$core$Dict$size(model.players)) ? 1 : (_p18 + 1))
-							}),
-						{ctor: '[]'});
+					if (_elm_lang$core$Native_Utils.eq(
+						_p19,
+						_elm_lang$core$Dict$size(model.players))) {
+						var players = _elm_lang$core$Dict$values(model.players);
+						var playersWithScore = A2(
+							_elm_lang$core$Dict$map,
+							F2(
+								function (_p18, p) {
+									return _elm_lang$core$Native_Utils.update(
+										p,
+										{
+											score: A3(
+												_elm_lang$core$List$foldr,
+												F2(
+													function (p2, acc) {
+														var piece2 = A2(_elm_lang$core$Maybe$withDefault, _user$project$Types$dummyPiece, p2.choice);
+														var piece1 = A2(_elm_lang$core$Maybe$withDefault, _user$project$Types$dummyPiece, p.choice);
+														return acc + A2(_user$project$Main$shifumi, piece1, piece2);
+													}),
+												0,
+												players)
+										});
+								}),
+							newPlayers);
+						var turnSelectionOrder = A2(
+							_elm_lang$core$List$map,
+							function (_) {
+								return _.id;
+							},
+							_elm_lang$core$List$reverse(
+								A2(
+									_elm_lang$core$List$sortBy,
+									function (_) {
+										return _.score;
+									},
+									_elm_lang$core$Dict$values(playersWithScore))));
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									position: _user$project$Types$TurnSelection,
+									turnSelectionOrder: turnSelectionOrder,
+									currentPlayer: _elm_lang$core$List$head(turnSelectionOrder),
+									players: playersWithScore
+								}),
+							{ctor: '[]'});
+					} else {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									players: newPlayers,
+									currentPlayer: _elm_lang$core$Maybe$Just(_p19 + 1)
+								}),
+							{ctor: '[]'});
+					}
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{position: _user$project$Types$TurnSelection}),
+						model,
 						{ctor: '[]'});
 				}
+			case 'SelectTurn':
+				var _p25 = _p14._0;
+				var _p20 = A2(
+					_elm_lang$core$Maybe$andThen,
+					function (p) {
+						return A2(_elm_lang$core$Dict$get, p, model.players);
+					},
+					model.currentPlayer);
+				if (_p20.ctor === 'Nothing') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					if (A2(_elm_lang$core$Set$member, _p25, model.availableTurns)) {
+						var newPlayers = A3(
+							_elm_lang$core$Dict$update,
+							_p20._0.id,
+							function (mv) {
+								var _p21 = mv;
+								if (_p21.ctor === 'Nothing') {
+									return _elm_lang$core$Maybe$Nothing;
+								} else {
+									return _elm_lang$core$Maybe$Just(
+										_elm_lang$core$Native_Utils.update(
+											_p21._0,
+											{
+												turn: _elm_lang$core$Maybe$Just(_p25)
+											}));
+								}
+							},
+							model.players);
+						var _p22 = function () {
+							var _p23 = model.turnSelectionOrder;
+							if (_p23.ctor === '[]') {
+								return {
+									ctor: '_Tuple4',
+									_0: _user$project$Types$TurnSelection,
+									_1: _elm_lang$core$Maybe$Nothing,
+									_2: {ctor: '[]'},
+									_3: {ctor: '[]'}
+								};
+							} else {
+								if (_p23._1.ctor === '[]') {
+									var plOrd = A2(
+										_elm_lang$core$List$map,
+										_elm_lang$core$Tuple$first,
+										A2(
+											_elm_lang$core$List$sortBy,
+											_elm_lang$core$Tuple$second,
+											A2(
+												_elm_lang$core$List$filterMap,
+												function (p) {
+													return A2(
+														_elm_lang$core$Maybe$andThen,
+														function (t) {
+															return _elm_lang$core$Maybe$Just(
+																{
+																	ctor: '_Tuple2',
+																	_0: function (_) {
+																		return _.id;
+																	}(p),
+																	_1: t
+																});
+														},
+														function (_) {
+															return _.turn;
+														}(p));
+												},
+												_elm_lang$core$Dict$values(newPlayers))));
+									return {
+										ctor: '_Tuple4',
+										_0: _user$project$Types$Playing,
+										_1: _elm_lang$core$List$head(plOrd),
+										_2: {ctor: '[]'},
+										_3: plOrd
+									};
+								} else {
+									var _p24 = _p23._1;
+									return {
+										ctor: '_Tuple4',
+										_0: _user$project$Types$TurnSelection,
+										_1: _elm_lang$core$List$head(_p24),
+										_2: _p24,
+										_3: {ctor: '[]'}
+									};
+								}
+							}
+						}();
+						var newPos = _p22._0;
+						var newCurrentPlayer = _p22._1;
+						var newTurnSelectionOrder = _p22._2;
+						var playingOrder = _p22._3;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									players: newPlayers,
+									availableTurns: A2(_elm_lang$core$Set$remove, _p25, model.availableTurns),
+									turnSelectionOrder: newTurnSelectionOrder,
+									currentPlayer: newCurrentPlayer,
+									position: newPos,
+									playingOrder: playingOrder
+								}),
+							{ctor: '[]'});
+					} else {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
+				}
 			default:
-				var _p24 = _p14._0._1;
-				var _p23 = _p14._0._0;
+				var _p30 = _p14._0._1;
+				var _p29 = _p14._0._0;
 				var currentPiece = A2(
 					_elm_lang$core$Maybe$andThen,
 					function (_) {
@@ -323,28 +495,27 @@ var _user$project$Main$update = F2(
 							return A2(_elm_lang$core$Dict$get, k, model.players);
 						},
 						model.currentPlayer));
-				var _p19 = {
+				var _p26 = {
 					ctor: '_Tuple3',
 					_0: currentPiece,
 					_1: A2(
 						_elm_lang$core$Dict$get,
-						{ctor: '_Tuple2', _0: _p23, _1: _p24},
+						{ctor: '_Tuple2', _0: _p29, _1: _p30},
 						model.board),
 					_2: model.position
 				};
-				_v9_2:
+				_v12_2:
 				do {
-					if (_p19.ctor === '_Tuple3') {
-						if (_p19._0.ctor === 'Nothing') {
+					if (_p26.ctor === '_Tuple3') {
+						if (_p26._0.ctor === 'Nothing') {
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								model,
 								{ctor: '[]'});
 						} else {
-							if ((_p19._1.ctor === 'Just') && (_p19._2.ctor === 'Playing')) {
-								var _p22 = _p19._0._0.playerId;
-								var _p20 = _p19._1._0.state;
-								switch (_p20.ctor) {
+							if ((_p26._1.ctor === 'Just') && (_p26._2.ctor === 'Playing')) {
+								var _p27 = _p26._1._0.state;
+								switch (_p27.ctor) {
 									case 'UnPlayable':
 										return A2(
 											_elm_lang$core$Platform_Cmd_ops['!'],
@@ -358,27 +529,27 @@ var _user$project$Main$update = F2(
 									default:
 										var newPlayers = A3(
 											_elm_lang$core$Dict$update,
-											_p22,
+											_p26._0._0.playerId,
 											function (mv) {
-												var _p21 = mv;
-												if (_p21.ctor === 'Nothing') {
+												var _p28 = mv;
+												if (_p28.ctor === 'Nothing') {
 													return _elm_lang$core$Maybe$Nothing;
 												} else {
 													return _elm_lang$core$Maybe$Just(
 														_elm_lang$core$Native_Utils.update(
-															_p21._0,
+															_p28._0,
 															{choice: _elm_lang$core$Maybe$Nothing}));
 												}
 											},
 											model.players);
 										var newCell = A3(
 											_user$project$Types$Cell,
-											_p23,
-											_p24,
-											_user$project$Types$Contain(_p19._0._0));
+											_p29,
+											_p30,
+											_user$project$Types$Contain(_p26._0._0));
 										var newBoard = A3(
 											_elm_lang$core$Dict$insert,
-											{ctor: '_Tuple2', _0: _p23, _1: _p24},
+											{ctor: '_Tuple2', _0: _p29, _1: _p30},
 											newCell,
 											model.board);
 										return A2(
@@ -388,19 +559,23 @@ var _user$project$Main$update = F2(
 												{
 													board: newBoard,
 													players: newPlayers,
-													currentPlayer: _elm_lang$core$Maybe$Just(
-														_elm_lang$core$Native_Utils.eq(
-															_p22,
-															_elm_lang$core$Dict$size(model.players)) ? 1 : (_p22 + 1))
+													currentPlayer: A2(
+														_elm_lang$core$Maybe$andThen,
+														_elm_lang$core$List$head,
+														_elm_lang$core$List$tail(model.playingOrder)),
+													playingOrder: A2(
+														_elm_lang$core$Maybe$withDefault,
+														{ctor: '[]'},
+														_elm_lang$core$List$tail(model.playingOrder))
 												}),
 											{ctor: '[]'});
 								}
 							} else {
-								break _v9_2;
+								break _v12_2;
 							}
 						}
 					} else {
-						break _v9_2;
+						break _v12_2;
 					}
 				} while(false);
 				return A2(
@@ -420,6 +595,9 @@ var _user$project$Main$init = A2(
 			_user$project$Main$boardWithEdge,
 			_user$project$Main$n,
 			_user$project$Main$hexaBoard(_user$project$Main$n)),
+		availableTurns: _elm_lang$core$Set$empty,
+		turnSelectionOrder: {ctor: '[]'},
+		playingOrder: {ctor: '[]'},
 		currentPlayer: _elm_lang$core$Maybe$Nothing,
 		position: _user$project$Types$Config
 	},

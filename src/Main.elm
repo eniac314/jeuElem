@@ -5,6 +5,8 @@ import Dict exposing (..)
 import Html exposing (..)
 import Types exposing (..)
 import View exposing (..)
+import Data exposing (..)
+import Set exposing (..)
 
 
 main =
@@ -26,6 +28,9 @@ init =
     , players = Dict.empty
     , board =
         boardWithEdge n (hexaBoard n)
+    , availableTurns = Set.empty
+    , turnSelectionOrder = []
+    , playingOrder = []
 
     --|> rainbowEdge n
     , currentPlayer = Nothing
@@ -50,6 +55,7 @@ update msg model =
                 | players = makePlayers model.nbrPlayers
                 , currentPlayer = Just 1
                 , position = PieceSelection
+                , availableTurns = Set.fromList (List.range 1 model.nbrPlayers)
             }
                 ! []
 
@@ -58,6 +64,7 @@ update msg model =
                 Dict.get playerId model.players
                     |> Maybe.andThen .choice
             of
+                -- le joueur n'a pas encore choisi sa piece
                 Nothing ->
                     let
                         newPlayers =
@@ -76,19 +83,128 @@ update msg model =
                                 )
                                 model.players
                     in
-                        { model
-                            | players = newPlayers
-                            , currentPlayer =
-                                Just <|
-                                    if playerId == Dict.size model.players then
-                                        1
-                                    else
-                                        playerId + 1
-                        }
-                            ! []
+                        if playerId == Dict.size model.players then
+                            -- si dernier joueur qui choisi sa piece calcul des scores et passage a la
+                            -- selection des tours
+                            let
+                                playersWithScore =
+                                    (Dict.map
+                                        (\_ p ->
+                                            { p
+                                                | score =
+                                                    List.foldr
+                                                        (\p2 acc ->
+                                                            let
+                                                                piece1 =
+                                                                    Maybe.withDefault dummyPiece p.choice
 
+                                                                piece2 =
+                                                                    Maybe.withDefault dummyPiece p2.choice
+                                                            in
+                                                                acc + shifumi piece1 piece2
+                                                        )
+                                                        0
+                                                        players
+                                            }
+                                        )
+                                        newPlayers
+                                    )
+
+                                players =
+                                    Dict.values model.players
+
+                                turnSelectionOrder =
+                                    Dict.values playersWithScore
+                                        |> List.sortBy .score
+                                        |> List.reverse
+                                        |> List.map .id
+                            in
+                                { model
+                                    | position = TurnSelection
+                                    , turnSelectionOrder = turnSelectionOrder
+                                    , currentPlayer = List.head turnSelectionOrder
+                                    , players = playersWithScore
+                                }
+                                    ! []
+                        else
+                            -- sinon passage au joueur suivant
+                            { model
+                                | players = newPlayers
+                                , currentPlayer =
+                                    Just <|
+                                        playerId
+                                            + 1
+                            }
+                                ! []
+
+                -- Le joueur en cours a deja une piece, cas impossible en theorie
                 _ ->
-                    { model | position = TurnSelection } ! []
+                    model ! []
+
+        SelectTurn n ->
+            case
+                model.currentPlayer
+                    |> Maybe.andThen (\p -> Dict.get p model.players)
+            of
+                Nothing ->
+                    model ! []
+
+                Just cp ->
+                    if Set.member n model.availableTurns then
+                        let
+                            newPlayers =
+                                Dict.update cp.id
+                                    (\mv ->
+                                        case mv of
+                                            Nothing ->
+                                                Nothing
+
+                                            Just ({ turn } as player) ->
+                                                Just
+                                                    { player
+                                                        | turn = Just n
+                                                    }
+                                    )
+                                    model.players
+
+                            ( newPos, newCurrentPlayer, newTurnSelectionOrder, playingOrder ) =
+                                case model.turnSelectionOrder of
+                                    [] ->
+                                        ( TurnSelection, Nothing, [], [] )
+
+                                    x :: [] ->
+                                        let
+                                            plOrd =
+                                                newPlayers
+                                                    |> Dict.values
+                                                    |> List.filterMap
+                                                        (\p ->
+                                                            .turn p
+                                                                |> Maybe.andThen (\t -> Just ( .id p, t ))
+                                                        )
+                                                    |> List.sortBy Tuple.second
+                                                    |> List.map Tuple.first
+                                        in
+                                            ( Playing
+                                            , List.head plOrd
+                                            , []
+                                            , plOrd
+                                            )
+
+                                    x :: xs ->
+                                        ( TurnSelection, List.head xs, xs, [] )
+                        in
+                            { model
+                                | players = newPlayers
+                                , availableTurns = Set.remove n model.availableTurns
+                                , turnSelectionOrder = newTurnSelectionOrder
+                                , currentPlayer = newCurrentPlayer
+                                , position = newPos
+                                , playingOrder = playingOrder
+                            }
+                                ! []
+                    else
+                        model ! []
 
         PutDownPiece ( xPos, yPos ) ->
             let
@@ -139,11 +255,9 @@ update msg model =
                                         | board = newBoard
                                         , players = newPlayers
                                         , currentPlayer =
-                                            Just <|
-                                                if playerId == Dict.size model.players then
-                                                    1
-                                                else
-                                                    playerId + 1
+                                            List.tail model.playingOrder
+                                                |> Maybe.andThen List.head
+                                        , playingOrder = Maybe.withDefault [] (List.tail model.playingOrder)
                                     }
                                         ! []
 
@@ -162,7 +276,7 @@ makePlayers n =
                 |> List.map (\v -> Piece v id)
 
         makePlayer id =
-            Player (makeDeck id) ("toto " ++ toString id) id Nothing 0
+            Player (makeDeck id) ("toto " ++ toString id) id Nothing Nothing 0
     in
         List.map makePlayer (List.range 1 n)
             |> List.foldr (\p res -> Dict.insert p.id p res) Dict.empty
@@ -200,6 +314,19 @@ neighbours j i =
     , ( j, i + 1 )
     , ( j + 1, i + 1 )
     ]
+
+
+shifumi : Piece -> Piece -> Int
+shifumi piece1 piece2 =
+    let
+        val1 =
+            piece1.value
+
+        val2 =
+            piece2.value
+    in
+        Dict.get ( val1, val2 ) shifumiTable
+            |> Maybe.withDefault 0
 
 
 

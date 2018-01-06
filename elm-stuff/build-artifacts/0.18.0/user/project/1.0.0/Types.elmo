@@ -1,18 +1,19 @@
+var _user$project$Types$dummyPiece = {value: 0, playerId: -1};
 var _user$project$Types$Piece = F2(
 	function (a, b) {
 		return {value: a, playerId: b};
 	});
-var _user$project$Types$Player = F5(
-	function (a, b, c, d, e) {
-		return {deck: a, name: b, id: c, choice: d, score: e};
+var _user$project$Types$Player = F6(
+	function (a, b, c, d, e, f) {
+		return {deck: a, name: b, id: c, choice: d, turn: e, score: f};
 	});
 var _user$project$Types$Cell = F3(
 	function (a, b, c) {
 		return {xPos: a, yPos: b, state: c};
 	});
-var _user$project$Types$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {boardSize: a, nbrPlayers: b, players: c, board: d, currentPlayer: e, position: f};
+var _user$project$Types$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {boardSize: a, nbrPlayers: b, players: c, availableTurns: d, turnSelectionOrder: e, playingOrder: f, board: g, currentPlayer: h, position: i};
 	});
 var _user$project$Types$EndGame = {ctor: 'EndGame'};
 var _user$project$Types$Playing = {ctor: 'Playing'};
@@ -32,6 +33,9 @@ var _user$project$Types$Rainbow = function (a) {
 var _user$project$Types$Grey = {ctor: 'Grey'};
 var _user$project$Types$PutDownPiece = function (a) {
 	return {ctor: 'PutDownPiece', _0: a};
+};
+var _user$project$Types$SelectTurn = function (a) {
+	return {ctor: 'SelectTurn', _0: a};
 };
 var _user$project$Types$PickUpPiece = function (a) {
 	return {ctor: 'PickUpPiece', _0: a};
