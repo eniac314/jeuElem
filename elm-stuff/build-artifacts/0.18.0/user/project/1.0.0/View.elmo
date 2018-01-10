@@ -56,7 +56,7 @@ var _user$project$View$piecesPatterns = A2(
 										_0: _elm_lang$svg$Svg_Attributes$xlinkHref(
 											A2(
 												_elm_lang$core$Basics_ops['++'],
-												'../images/pieces/piece',
+												'images/pieces/piece',
 												A2(
 													_elm_lang$core$Basics_ops['++'],
 													_elm_lang$core$Basics$toString(n),
