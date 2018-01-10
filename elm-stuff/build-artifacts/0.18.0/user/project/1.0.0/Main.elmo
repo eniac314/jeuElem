@@ -134,33 +134,221 @@ var _user$project$Main$shifumi = F2(
 				{ctor: '_Tuple2', _0: val1, _1: val2},
 				_user$project$Data$shifumiTable));
 	});
-var _user$project$Main$neighbours = F2(
-	function (j, i) {
-		return {
+var _user$project$Main$neighbours = function (c) {
+	var y = c.yPos;
+	var x = c.xPos;
+	return {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: x - 1, _1: y - 1},
+		_1: {
 			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: j - 1, _1: i - 1},
+			_0: {ctor: '_Tuple2', _0: x, _1: y - 1},
 			_1: {
 				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: j, _1: i - 1},
+				_0: {ctor: '_Tuple2', _0: x - 1, _1: y},
 				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: j - 1, _1: i},
+					_0: {ctor: '_Tuple2', _0: x + 1, _1: y},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: j + 1, _1: i},
+						_0: {ctor: '_Tuple2', _0: x, _1: y + 1},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: j, _1: i + 1},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: j + 1, _1: i + 1},
-								_1: {ctor: '[]'}
-							}
+							_0: {ctor: '_Tuple2', _0: x + 1, _1: y + 1},
+							_1: {ctor: '[]'}
 						}
 					}
 				}
 			}
-		};
+		}
+	};
+};
+var _user$project$Main$update_board = F2(
+	function (c, board) {
+		var convert_neighbours = F5(
+			function (piece, n_list, board, cells_todo, cells_done) {
+				convert_neighbours:
+				while (true) {
+					var _p10 = n_list;
+					if (_p10.ctor === '[]') {
+						return {ctor: '_Tuple2', _0: board, _1: cells_todo};
+					} else {
+						var _p17 = _p10._1;
+						var _p16 = _p10._0;
+						var _p11 = A2(_elm_lang$core$Dict$get, _p16, board);
+						if (_p11.ctor === 'Just') {
+							var _p15 = _p11._0;
+							var _p12 = _p15.state;
+							if (_p12.ctor === 'Contain') {
+								var _p14 = _p12._0;
+								if ((!A2(_elm_lang$core$List$member, _p15, cells_done)) && (!_elm_lang$core$Native_Utils.eq(piece.playerId, _p14.playerId))) {
+									var new_n_piece = _elm_lang$core$Native_Utils.update(
+										_p14,
+										{playerId: piece.playerId});
+									var new_n_cell = _elm_lang$core$Native_Utils.update(
+										_p15,
+										{
+											state: _user$project$Types$Contain(new_n_piece)
+										});
+									var new_board = A3(_elm_lang$core$Dict$insert, _p16, new_n_cell, board);
+									var _p13 = A2(
+										_elm_lang$core$Dict$get,
+										{ctor: '_Tuple2', _0: piece.value, _1: _p14.value},
+										_user$project$Data$shifumiTable);
+									_v7_2:
+									do {
+										if (_p13.ctor === 'Just') {
+											switch (_p13._0) {
+												case 1:
+													var _v8 = piece,
+														_v9 = _p17,
+														_v10 = new_board,
+														_v11 = cells_todo,
+														_v12 = cells_done;
+													piece = _v8;
+													n_list = _v9;
+													board = _v10;
+													cells_todo = _v11;
+													cells_done = _v12;
+													continue convert_neighbours;
+												case 2:
+													var _v13 = piece,
+														_v14 = _p17,
+														_v15 = new_board,
+														_v16 = A2(
+														_elm_lang$core$Basics_ops['++'],
+														cells_todo,
+														{
+															ctor: '::',
+															_0: _p15,
+															_1: {ctor: '[]'}
+														}),
+														_v17 = cells_done;
+													piece = _v13;
+													n_list = _v14;
+													board = _v15;
+													cells_todo = _v16;
+													cells_done = _v17;
+													continue convert_neighbours;
+												default:
+													break _v7_2;
+											}
+										} else {
+											break _v7_2;
+										}
+									} while(false);
+									var _v18 = piece,
+										_v19 = _p17,
+										_v20 = board,
+										_v21 = cells_todo,
+										_v22 = cells_done;
+									piece = _v18;
+									n_list = _v19;
+									board = _v20;
+									cells_todo = _v21;
+									cells_done = _v22;
+									continue convert_neighbours;
+								} else {
+									var _v23 = piece,
+										_v24 = _p17,
+										_v25 = board,
+										_v26 = cells_todo,
+										_v27 = cells_done;
+									piece = _v23;
+									n_list = _v24;
+									board = _v25;
+									cells_todo = _v26;
+									cells_done = _v27;
+									continue convert_neighbours;
+								}
+							} else {
+								var _v28 = piece,
+									_v29 = _p17,
+									_v30 = board,
+									_v31 = cells_todo,
+									_v32 = cells_done;
+								piece = _v28;
+								n_list = _v29;
+								board = _v30;
+								cells_todo = _v31;
+								cells_done = _v32;
+								continue convert_neighbours;
+							}
+						} else {
+							var _v33 = piece,
+								_v34 = _p17,
+								_v35 = board,
+								_v36 = cells_todo,
+								_v37 = cells_done;
+							piece = _v33;
+							n_list = _v34;
+							board = _v35;
+							cells_todo = _v36;
+							cells_done = _v37;
+							continue convert_neighbours;
+						}
+					}
+				}
+			});
+		var update_board_helper = F3(
+			function (board, cells_todo, cells_done) {
+				update_board_helper:
+				while (true) {
+					var _p18 = cells_todo;
+					if (_p18.ctor === '[]') {
+						return board;
+					} else {
+						var _p22 = _p18._1;
+						var _p21 = _p18._0;
+						var _p19 = _p21.state;
+						if (_p19.ctor === 'Contain') {
+							if (!A2(_elm_lang$core$List$member, _p21, cells_done)) {
+								var _p20 = A5(
+									convert_neighbours,
+									_p19._0,
+									_user$project$Main$neighbours(_p21),
+									board,
+									cells_todo,
+									cells_done);
+								var new_board = _p20._0;
+								var new_cells_todo = _p20._1;
+								var _v40 = new_board,
+									_v41 = new_cells_todo,
+									_v42 = {ctor: '::', _0: _p21, _1: cells_done};
+								board = _v40;
+								cells_todo = _v41;
+								cells_done = _v42;
+								continue update_board_helper;
+							} else {
+								var _v43 = board,
+									_v44 = _p22,
+									_v45 = cells_done;
+								board = _v43;
+								cells_todo = _v44;
+								cells_done = _v45;
+								continue update_board_helper;
+							}
+						} else {
+							var _v46 = board,
+								_v47 = _p22,
+								_v48 = cells_done;
+							board = _v46;
+							cells_todo = _v47;
+							cells_done = _v48;
+							continue update_board_helper;
+						}
+					}
+				}
+			});
+		return A3(
+			update_board_helper,
+			board,
+			{
+				ctor: '::',
+				_0: c,
+				_1: {ctor: '[]'}
+			},
+			{ctor: '[]'});
 	});
 var _user$project$Main$hexaBoard = function (n) {
 	var makeRowBottom = function (i) {
@@ -190,14 +378,14 @@ var _user$project$Main$hexaBoard = function (n) {
 	return A3(
 		_elm_lang$core$List$foldr,
 		F2(
-			function (_p10, res) {
-				var _p11 = _p10;
-				var _p13 = _p11._1;
-				var _p12 = _p11._0;
+			function (_p23, res) {
+				var _p24 = _p23;
+				var _p26 = _p24._1;
+				var _p25 = _p24._0;
 				return A3(
 					_elm_lang$core$Dict$insert,
-					{ctor: '_Tuple2', _0: _p12, _1: _p13},
-					A3(_user$project$Types$Cell, _p12, _p13, _user$project$Types$Empty),
+					{ctor: '_Tuple2', _0: _p25, _1: _p26},
+					A3(_user$project$Types$Cell, _p25, _p26, _user$project$Types$Empty),
 					res);
 			}),
 		_elm_lang$core$Dict$empty,
@@ -242,16 +430,16 @@ var _user$project$Main$subscriptions = function (model) {
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p14 = msg;
-		switch (_p14.ctor) {
+		var _p27 = msg;
+		switch (_p27.ctor) {
 			case 'SetPlayerNumber':
-				var _p15 = _elm_lang$core$String$toInt(_p14._0);
-				if (_p15.ctor === 'Ok') {
+				var _p28 = _elm_lang$core$String$toInt(_p27._0);
+				if (_p28.ctor === 'Ok') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{nbrPlayers: _p15._0}),
+							{nbrPlayers: _p28._0}),
 						{ctor: '[]'});
 				} else {
 					return A2(
@@ -273,45 +461,45 @@ var _user$project$Main$update = F2(
 						}),
 					{ctor: '[]'});
 			case 'PickUpPiece':
-				var _p19 = _p14._0.playerId;
-				var _p16 = A2(
+				var _p32 = _p27._0.playerId;
+				var _p29 = A2(
 					_elm_lang$core$Maybe$andThen,
 					function (_) {
 						return _.choice;
 					},
-					A2(_elm_lang$core$Dict$get, _p19, model.players));
-				if (_p16.ctor === 'Nothing') {
+					A2(_elm_lang$core$Dict$get, _p32, model.players));
+				if (_p29.ctor === 'Nothing') {
 					var newPlayers = A3(
 						_elm_lang$core$Dict$update,
-						_p19,
+						_p32,
 						function (mv) {
-							var _p17 = mv;
-							if (_p17.ctor === 'Nothing') {
+							var _p30 = mv;
+							if (_p30.ctor === 'Nothing') {
 								return _elm_lang$core$Maybe$Nothing;
 							} else {
 								return _elm_lang$core$Maybe$Just(
 									_elm_lang$core$Native_Utils.update(
-										_p17._0,
+										_p30._0,
 										{
 											deck: A2(
 												_elm_lang$core$List$filter,
 												function (p) {
-													return !_elm_lang$core$Native_Utils.eq(p.value, _p14._0.value);
+													return !_elm_lang$core$Native_Utils.eq(p.value, _p27._0.value);
 												},
-												_p17._0.deck),
-											choice: _elm_lang$core$Maybe$Just(_p14._0)
+												_p30._0.deck),
+											choice: _elm_lang$core$Maybe$Just(_p27._0)
 										}));
 							}
 						},
 						model.players);
 					if (_elm_lang$core$Native_Utils.eq(
-						_p19,
+						_p32,
 						_elm_lang$core$Dict$size(model.players))) {
 						var players = _elm_lang$core$Dict$values(model.players);
 						var playersWithScore = A2(
 							_elm_lang$core$Dict$map,
 							F2(
-								function (_p18, p) {
+								function (_p31, p) {
 									return _elm_lang$core$Native_Utils.update(
 										p,
 										{
@@ -358,7 +546,7 @@ var _user$project$Main$update = F2(
 								model,
 								{
 									players: newPlayers,
-									currentPlayer: _elm_lang$core$Maybe$Just(_p19 + 1)
+									currentPlayer: _elm_lang$core$Maybe$Just(_p32 + 1)
 								}),
 							{ctor: '[]'});
 					}
@@ -369,40 +557,40 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'SelectTurn':
-				var _p25 = _p14._0;
-				var _p20 = A2(
+				var _p38 = _p27._0;
+				var _p33 = A2(
 					_elm_lang$core$Maybe$andThen,
 					function (p) {
 						return A2(_elm_lang$core$Dict$get, p, model.players);
 					},
 					model.currentPlayer);
-				if (_p20.ctor === 'Nothing') {
+				if (_p33.ctor === 'Nothing') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					if (A2(_elm_lang$core$Set$member, _p25, model.availableTurns)) {
+					if (A2(_elm_lang$core$Set$member, _p38, model.availableTurns)) {
 						var newPlayers = A3(
 							_elm_lang$core$Dict$update,
-							_p20._0.id,
+							_p33._0.id,
 							function (mv) {
-								var _p21 = mv;
-								if (_p21.ctor === 'Nothing') {
+								var _p34 = mv;
+								if (_p34.ctor === 'Nothing') {
 									return _elm_lang$core$Maybe$Nothing;
 								} else {
 									return _elm_lang$core$Maybe$Just(
 										_elm_lang$core$Native_Utils.update(
-											_p21._0,
+											_p34._0,
 											{
-												turn: _elm_lang$core$Maybe$Just(_p25)
+												turn: _elm_lang$core$Maybe$Just(_p38)
 											}));
 								}
 							},
 							model.players);
-						var _p22 = function () {
-							var _p23 = model.turnSelectionOrder;
-							if (_p23.ctor === '[]') {
+						var _p35 = function () {
+							var _p36 = model.turnSelectionOrder;
+							if (_p36.ctor === '[]') {
 								return {
 									ctor: '_Tuple4',
 									_0: _user$project$Types$TurnSelection,
@@ -411,7 +599,7 @@ var _user$project$Main$update = F2(
 									_3: {ctor: '[]'}
 								};
 							} else {
-								if (_p23._1.ctor === '[]') {
+								if (_p36._1.ctor === '[]') {
 									var plOrd = A2(
 										_elm_lang$core$List$map,
 										_elm_lang$core$Tuple$first,
@@ -446,28 +634,28 @@ var _user$project$Main$update = F2(
 										_3: plOrd
 									};
 								} else {
-									var _p24 = _p23._1;
+									var _p37 = _p36._1;
 									return {
 										ctor: '_Tuple4',
 										_0: _user$project$Types$TurnSelection,
-										_1: _elm_lang$core$List$head(_p24),
-										_2: _p24,
+										_1: _elm_lang$core$List$head(_p37),
+										_2: _p37,
 										_3: {ctor: '[]'}
 									};
 								}
 							}
 						}();
-						var newPos = _p22._0;
-						var newCurrentPlayer = _p22._1;
-						var newTurnSelectionOrder = _p22._2;
-						var playingOrder = _p22._3;
+						var newPos = _p35._0;
+						var newCurrentPlayer = _p35._1;
+						var newTurnSelectionOrder = _p35._2;
+						var playingOrder = _p35._3;
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_elm_lang$core$Native_Utils.update(
 								model,
 								{
 									players: newPlayers,
-									availableTurns: A2(_elm_lang$core$Set$remove, _p25, model.availableTurns),
+									availableTurns: A2(_elm_lang$core$Set$remove, _p38, model.availableTurns),
 									turnSelectionOrder: newTurnSelectionOrder,
 									currentPlayer: newCurrentPlayer,
 									position: newPos,
@@ -482,8 +670,8 @@ var _user$project$Main$update = F2(
 					}
 				}
 			default:
-				var _p30 = _p14._0._1;
-				var _p29 = _p14._0._0;
+				var _p44 = _p27._0._1;
+				var _p43 = _p27._0._0;
 				var currentPiece = A2(
 					_elm_lang$core$Maybe$andThen,
 					function (_) {
@@ -495,27 +683,27 @@ var _user$project$Main$update = F2(
 							return A2(_elm_lang$core$Dict$get, k, model.players);
 						},
 						model.currentPlayer));
-				var _p26 = {
+				var _p39 = {
 					ctor: '_Tuple3',
 					_0: currentPiece,
 					_1: A2(
 						_elm_lang$core$Dict$get,
-						{ctor: '_Tuple2', _0: _p29, _1: _p30},
+						{ctor: '_Tuple2', _0: _p43, _1: _p44},
 						model.board),
 					_2: model.position
 				};
-				_v12_2:
+				_v57_2:
 				do {
-					if (_p26.ctor === '_Tuple3') {
-						if (_p26._0.ctor === 'Nothing') {
+					if (_p39.ctor === '_Tuple3') {
+						if (_p39._0.ctor === 'Nothing') {
 							return A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								model,
 								{ctor: '[]'});
 						} else {
-							if ((_p26._1.ctor === 'Just') && (_p26._2.ctor === 'Playing')) {
-								var _p27 = _p26._1._0.state;
-								switch (_p27.ctor) {
+							if ((_p39._1.ctor === 'Just') && (_p39._2.ctor === 'Playing')) {
+								var _p40 = _p39._1._0.state;
+								switch (_p40.ctor) {
 									case 'UnPlayable':
 										return A2(
 											_elm_lang$core$Platform_Cmd_ops['!'],
@@ -529,53 +717,82 @@ var _user$project$Main$update = F2(
 									default:
 										var newPlayers = A3(
 											_elm_lang$core$Dict$update,
-											_p26._0._0.playerId,
+											_p39._0._0.playerId,
 											function (mv) {
-												var _p28 = mv;
-												if (_p28.ctor === 'Nothing') {
+												var _p41 = mv;
+												if (_p41.ctor === 'Nothing') {
 													return _elm_lang$core$Maybe$Nothing;
 												} else {
 													return _elm_lang$core$Maybe$Just(
 														_elm_lang$core$Native_Utils.update(
-															_p28._0,
+															_p41._0,
 															{choice: _elm_lang$core$Maybe$Nothing}));
 												}
 											},
 											model.players);
 										var newCell = A3(
 											_user$project$Types$Cell,
-											_p29,
-											_p30,
-											_user$project$Types$Contain(_p26._0._0));
-										var newBoard = A3(
-											_elm_lang$core$Dict$insert,
-											{ctor: '_Tuple2', _0: _p29, _1: _p30},
+											_p43,
+											_p44,
+											_user$project$Types$Contain(_p39._0._0));
+										var newBoard = A2(
+											_user$project$Main$update_board,
 											newCell,
-											model.board);
-										return A2(
-											_elm_lang$core$Platform_Cmd_ops['!'],
-											_elm_lang$core$Native_Utils.update(
+											A3(
+												_elm_lang$core$Dict$insert,
+												{ctor: '_Tuple2', _0: _p43, _1: _p44},
+												newCell,
+												model.board));
+										var _p42 = model.playingOrder;
+										if (_p42.ctor === '::') {
+											if (_p42._1.ctor === '[]') {
+												return A2(
+													_elm_lang$core$Platform_Cmd_ops['!'],
+													_elm_lang$core$Native_Utils.update(
+														model,
+														{
+															board: newBoard,
+															players: newPlayers,
+															currentPlayer: _elm_lang$core$Maybe$Just(1),
+															position: _user$project$Types$PieceSelection,
+															availableTurns: _elm_lang$core$Set$fromList(
+																A2(_elm_lang$core$List$range, 1, model.nbrPlayers)),
+															turnSelectionOrder: {ctor: '[]'},
+															playingOrder: {ctor: '[]'}
+														}),
+													{ctor: '[]'});
+											} else {
+												return A2(
+													_elm_lang$core$Platform_Cmd_ops['!'],
+													_elm_lang$core$Native_Utils.update(
+														model,
+														{
+															board: newBoard,
+															players: newPlayers,
+															currentPlayer: A2(
+																_elm_lang$core$Maybe$andThen,
+																_elm_lang$core$List$head,
+																_elm_lang$core$List$tail(model.playingOrder)),
+															playingOrder: A2(
+																_elm_lang$core$Maybe$withDefault,
+																{ctor: '[]'},
+																_elm_lang$core$List$tail(model.playingOrder))
+														}),
+													{ctor: '[]'});
+											}
+										} else {
+											return A2(
+												_elm_lang$core$Platform_Cmd_ops['!'],
 												model,
-												{
-													board: newBoard,
-													players: newPlayers,
-													currentPlayer: A2(
-														_elm_lang$core$Maybe$andThen,
-														_elm_lang$core$List$head,
-														_elm_lang$core$List$tail(model.playingOrder)),
-													playingOrder: A2(
-														_elm_lang$core$Maybe$withDefault,
-														{ctor: '[]'},
-														_elm_lang$core$List$tail(model.playingOrder))
-												}),
-											{ctor: '[]'});
+												{ctor: '[]'});
+										}
 								}
 							} else {
-								break _v12_2;
+								break _v57_2;
 							}
 						}
 					} else {
-						break _v12_2;
+						break _v57_2;
 					}
 				} while(false);
 				return A2(

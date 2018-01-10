@@ -1,12 +1,12 @@
 module Main exposing (..)
 
 import Array exposing (..)
+import Data exposing (..)
 import Dict exposing (..)
 import Html exposing (..)
+import Set exposing (..)
 import Types exposing (..)
 import View exposing (..)
-import Data exposing (..)
-import Set exposing (..)
 
 
 main =
@@ -83,59 +83,58 @@ update msg model =
                                 )
                                 model.players
                     in
-                        if playerId == Dict.size model.players then
-                            -- si dernier joueur qui choisi sa piece calcul des scores et passage a la
-                            -- selection des tours
-                            let
-                                playersWithScore =
-                                    (Dict.map
-                                        (\_ p ->
-                                            { p
-                                                | score =
-                                                    List.foldr
-                                                        (\p2 acc ->
-                                                            let
-                                                                piece1 =
-                                                                    Maybe.withDefault dummyPiece p.choice
+                    if playerId == Dict.size model.players then
+                        -- si dernier joueur qui choisi sa piece calcul des scores et passage a la
+                        -- selection des tours
+                        let
+                            playersWithScore =
+                                Dict.map
+                                    (\_ p ->
+                                        { p
+                                            | score =
+                                                List.foldr
+                                                    (\p2 acc ->
+                                                        let
+                                                            piece1 =
+                                                                Maybe.withDefault dummyPiece p.choice
 
-                                                                piece2 =
-                                                                    Maybe.withDefault dummyPiece p2.choice
-                                                            in
-                                                                acc + shifumi piece1 piece2
-                                                        )
-                                                        0
-                                                        players
-                                            }
-                                        )
-                                        newPlayers
+                                                            piece2 =
+                                                                Maybe.withDefault dummyPiece p2.choice
+                                                        in
+                                                        acc + shifumi piece1 piece2
+                                                    )
+                                                    0
+                                                    players
+                                        }
                                     )
+                                    newPlayers
 
-                                players =
-                                    Dict.values model.players
+                            players =
+                                Dict.values model.players
 
-                                turnSelectionOrder =
-                                    Dict.values playersWithScore
-                                        |> List.sortBy .score
-                                        |> List.reverse
-                                        |> List.map .id
-                            in
-                                { model
-                                    | position = TurnSelection
-                                    , turnSelectionOrder = turnSelectionOrder
-                                    , currentPlayer = List.head turnSelectionOrder
-                                    , players = playersWithScore
-                                }
-                                    ! []
-                        else
-                            -- sinon passage au joueur suivant
-                            { model
-                                | players = newPlayers
-                                , currentPlayer =
-                                    Just <|
-                                        playerId
-                                            + 1
-                            }
-                                ! []
+                            turnSelectionOrder =
+                                Dict.values playersWithScore
+                                    |> List.sortBy .score
+                                    |> List.reverse
+                                    |> List.map .id
+                        in
+                        { model
+                            | position = TurnSelection
+                            , turnSelectionOrder = turnSelectionOrder
+                            , currentPlayer = List.head turnSelectionOrder
+                            , players = playersWithScore
+                        }
+                            ! []
+                    else
+                        -- sinon passage au joueur suivant
+                        { model
+                            | players = newPlayers
+                            , currentPlayer =
+                                Just <|
+                                    playerId
+                                        + 1
+                        }
+                            ! []
 
                 -- Le joueur en cours a deja une piece, cas impossible en theorie
                 _ ->
@@ -185,24 +184,24 @@ update msg model =
                                                     |> List.sortBy Tuple.second
                                                     |> List.map Tuple.first
                                         in
-                                            ( Playing
-                                            , List.head plOrd
-                                            , []
-                                            , plOrd
-                                            )
+                                        ( Playing
+                                        , List.head plOrd
+                                        , []
+                                        , plOrd
+                                        )
 
                                     x :: xs ->
                                         ( TurnSelection, List.head xs, xs, [] )
                         in
-                            { model
-                                | players = newPlayers
-                                , availableTurns = Set.remove n model.availableTurns
-                                , turnSelectionOrder = newTurnSelectionOrder
-                                , currentPlayer = newCurrentPlayer
-                                , position = newPos
-                                , playingOrder = playingOrder
-                            }
-                                ! []
+                        { model
+                            | players = newPlayers
+                            , availableTurns = Set.remove n model.availableTurns
+                            , turnSelectionOrder = newTurnSelectionOrder
+                            , currentPlayer = newCurrentPlayer
+                            , position = newPos
+                            , playingOrder = playingOrder
+                        }
+                            ! []
                     else
                         model ! []
 
@@ -216,41 +215,56 @@ update msg model =
                             )
                         |> Maybe.andThen .choice
             in
-                case ( currentPiece, Dict.get ( xPos, yPos ) model.board, model.position ) of
-                    ( Nothing, _, _ ) ->
-                        model ! []
+            case ( currentPiece, Dict.get ( xPos, yPos ) model.board, model.position ) of
+                ( Nothing, _, _ ) ->
+                    model ! []
 
-                    ( Just ({ value, playerId } as piece), Just cell, Playing ) ->
-                        case cell.state of
-                            UnPlayable _ ->
-                                model ! []
+                ( Just ({ value, playerId } as piece), Just cell, Playing ) ->
+                    case cell.state of
+                        UnPlayable _ ->
+                            model ! []
 
-                            Contain _ ->
-                                model ! []
+                        Contain _ ->
+                            model ! []
 
-                            _ ->
-                                let
-                                    newCell =
-                                        Cell xPos yPos (Contain piece)
+                        _ ->
+                            let
+                                newCell =
+                                    Cell xPos yPos (Contain piece)
 
-                                    newBoard =
-                                        Dict.insert ( xPos, yPos ) newCell model.board
+                                newBoard =
+                                    Dict.insert ( xPos, yPos ) newCell model.board
+                                        |> update_board newCell
 
-                                    newPlayers =
-                                        Dict.update playerId
-                                            (\mv ->
-                                                case mv of
-                                                    Nothing ->
-                                                        Nothing
+                                newPlayers =
+                                    Dict.update playerId
+                                        (\mv ->
+                                            case mv of
+                                                Nothing ->
+                                                    Nothing
 
-                                                    Just ({ deck, name, id } as player) ->
-                                                        Just
-                                                            { player
-                                                                | choice = Nothing
-                                                            }
-                                            )
-                                            model.players
-                                in
+                                                Just ({ deck, name, id } as player) ->
+                                                    Just
+                                                        { player
+                                                            | choice = Nothing
+                                                        }
+                                        )
+                                        model.players
+                            in
+                            case model.playingOrder of
+                                x :: [] ->
+                                    { model
+                                        | board = newBoard
+                                        , players = newPlayers
+                                        , currentPlayer = Just 1
+                                        , position = PieceSelection
+                                        , availableTurns = Set.fromList (List.range 1 model.nbrPlayers)
+                                        , turnSelectionOrder = []
+                                        , playingOrder = []
+                                    }
+                                        ! []
+
+                                x :: xs ->
                                     { model
                                         | board = newBoard
                                         , players = newPlayers
@@ -261,8 +275,11 @@ update msg model =
                                     }
                                         ! []
 
-                    _ ->
-                        model ! []
+                                [] ->
+                                    model ! []
+
+                _ ->
+                    model ! []
 
 
 subscriptions model =
@@ -278,8 +295,8 @@ makePlayers n =
         makePlayer id =
             Player (makeDeck id) ("toto " ++ toString id) id Nothing Nothing 0
     in
-        List.map makePlayer (List.range 1 n)
-            |> List.foldr (\p res -> Dict.insert p.id p res) Dict.empty
+    List.map makePlayer (List.range 1 n)
+        |> List.foldr (\p res -> Dict.insert p.id p res) Dict.empty
 
 
 hexaBoard : Int -> Board
@@ -297,22 +314,29 @@ hexaBoard n =
         bottomHalf =
             List.concatMap makeRowBottom (List.range (n + 1) (2 * n))
     in
-        (topHalf ++ bottomHalf)
-            |> List.foldr
-                (\( x, y ) res ->
-                    Dict.insert ( x, y ) (Cell x y Empty) res
-                )
-                Dict.empty
+    (topHalf ++ bottomHalf)
+        |> List.foldr
+            (\( x, y ) res ->
+                Dict.insert ( x, y ) (Cell x y Empty) res
+            )
+            Dict.empty
 
 
-neighbours : Int -> Int -> List ( Int, Int )
-neighbours j i =
-    [ ( j - 1, i - 1 )
-    , ( j, i - 1 )
-    , ( j - 1, i )
-    , ( j + 1, i )
-    , ( j, i + 1 )
-    , ( j + 1, i + 1 )
+neighbours : Cell -> List ( Int, Int )
+neighbours c =
+    let
+        x =
+            c.xPos
+
+        y =
+            c.yPos
+    in
+    [ ( x - 1, y - 1 )
+    , ( x, y - 1 )
+    , ( x - 1, y )
+    , ( x + 1, y )
+    , ( x, y + 1 )
+    , ( x + 1, y + 1 )
     ]
 
 
@@ -325,8 +349,8 @@ shifumi piece1 piece2 =
         val2 =
             piece2.value
     in
-        Dict.get ( val1, val2 ) shifumiTable
-            |> Maybe.withDefault 0
+    Dict.get ( val1, val2 ) shifumiTable
+        |> Maybe.withDefault 0
 
 
 
@@ -357,6 +381,71 @@ boardWithEdge n board =
 -------------------------------------------------------------------------------
 
 
+update_board : Cell -> Board -> Board
+update_board c board =
+    let
+        update_board_helper board cells_todo cells_done =
+            case cells_todo of
+                [] ->
+                    board
+
+                c :: cs ->
+                    case c.state of
+                        Contain piece ->
+                            if not (List.member c cells_done) then
+                                let
+                                    ( new_board, new_cells_todo ) =
+                                        convert_neighbours piece (neighbours c) board cells_todo cells_done
+                                in
+                                update_board_helper new_board new_cells_todo (c :: cells_done)
+                            else
+                                update_board_helper board cs cells_done
+
+                        _ ->
+                            update_board_helper board cs cells_done
+
+        convert_neighbours piece n_list board cells_todo cells_done =
+            case n_list of
+                [] ->
+                    ( board, cells_todo )
+
+                n :: ns ->
+                    case Dict.get n board of
+                        Just n_cell ->
+                            case n_cell.state of
+                                Contain n_piece ->
+                                    if not (List.member n_cell cells_done) && (piece.playerId /= n_piece.playerId) then
+                                        let
+                                            new_n_piece =
+                                                { n_piece | playerId = piece.playerId }
+
+                                            new_n_cell =
+                                                { n_cell | state = Contain new_n_piece }
+
+                                            new_board =
+                                                Dict.insert n new_n_cell board
+                                        in
+                                        case Dict.get ( piece.value, n_piece.value ) shifumiTable of
+                                            Just 1 ->
+                                                convert_neighbours piece ns new_board cells_todo cells_done
+
+                                            Just 2 ->
+                                                convert_neighbours piece ns new_board (cells_todo ++ [ n_cell ]) cells_done
+
+                                            _ ->
+                                                convert_neighbours piece ns board cells_todo cells_done
+                                    else
+                                        convert_neighbours piece ns board cells_todo cells_done
+
+                                _ ->
+                                    convert_neighbours piece ns board cells_todo cells_done
+
+                        Nothing ->
+                            convert_neighbours piece ns board cells_todo cells_done
+    in
+    update_board_helper board [ c ] []
+
+
 rainbowEdge : Int -> Board -> Board
 rainbowEdge n board =
     let
@@ -366,29 +455,29 @@ rainbowEdge n board =
         cells =
             goAround n
     in
-        List.foldr
-            (\cell ( n, acc ) ->
-                ( n + offset
-                , Dict.update cell
-                    (\v ->
-                        case v of
-                            Nothing ->
-                                Nothing
+    List.foldr
+        (\cell ( n, acc ) ->
+            ( n + offset
+            , Dict.update cell
+                (\v ->
+                    case v of
+                        Nothing ->
+                            Nothing
 
-                            Just cell_ ->
-                                case cell_.state of
-                                    UnPlayable _ ->
-                                        Just { cell_ | state = UnPlayable (Rainbow (color (0.4 * n))) }
+                        Just cell_ ->
+                            case cell_.state of
+                                UnPlayable _ ->
+                                    Just { cell_ | state = UnPlayable (Rainbow (color (0.4 * n))) }
 
-                                    _ ->
-                                        Just cell_
-                    )
-                    acc
+                                _ ->
+                                    Just cell_
                 )
+                acc
             )
-            ( 0, board )
-            cells
-            |> Tuple.second
+        )
+        ( 0, board )
+        cells
+        |> Tuple.second
 
 
 goAround n =
@@ -403,7 +492,7 @@ goAround n =
         ys =
             List.repeat n 0 ++ List.range 0 (2 * n) ++ List.repeat n (2 * n) ++ range_ (2 * n - 1) 1
     in
-        List.map2 (,) xs ys
+    List.map2 (,) xs ys
 
 
 color n =
@@ -417,4 +506,4 @@ color n =
         blue =
             sin (4 * pi * n / 3) * 127 + 128
     in
-        "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"
+    "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"

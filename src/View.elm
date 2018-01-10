@@ -4,11 +4,11 @@ import Dict exposing (..)
 import Html exposing (..)
 import Html.Attributes as Attr
 import Html.Events exposing (..)
+import Set exposing (..)
 import Svg exposing (..)
 import Svg.Attributes as SvgAttr
 import Svg.Events as SvgEvents
 import Types exposing (..)
-import Set exposing (..)
 
 
 view model =
@@ -55,29 +55,29 @@ turnSelectionView model =
                     , ( "cursor", "pointer" )
                     ]
                 ]
-                [ Html.text <| "turn " ++ (toString n) ]
+                [ Html.text <| "turn " ++ toString n ]
     in
-        div []
-            ([ Html.text <|
-                "Current player: "
-                    ++ (model.currentPlayer
-                            |> Maybe.andThen (\id -> Dict.get id model.players)
-                            |> Maybe.map (toString << .id)
-                            |> Maybe.withDefault "error"
-                       )
-             , br [] []
-             , Html.text <|
-                "Current player score: "
-                    ++ toString
-                        (model.currentPlayer
-                            |> Maybe.andThen (\id -> Dict.get id model.players)
-                            |> Maybe.map (toString << .score)
-                            |> Maybe.withDefault "error"
-                        )
-             , br [] []
-             ]
-                ++ ((Set.foldr (\n acc -> turn n :: acc) [] model.availableTurns))
-            )
+    div []
+        ([ Html.text <|
+            "Current player: "
+                ++ (model.currentPlayer
+                        |> Maybe.andThen (\id -> Dict.get id model.players)
+                        |> Maybe.map (toString << .id)
+                        |> Maybe.withDefault "error"
+                   )
+         , br [] []
+         , Html.text <|
+            "Current player score: "
+                ++ toString
+                    (model.currentPlayer
+                        |> Maybe.andThen (\id -> Dict.get id model.players)
+                        |> Maybe.map (toString << .score)
+                        |> Maybe.withDefault "error"
+                    )
+         , br [] []
+         ]
+            ++ Set.foldr (\n acc -> turn n :: acc) [] model.availableTurns
+        )
 
 
 boardView model =
@@ -142,51 +142,51 @@ hexaSvg x y state l u v =
                 |> List.map (\( u, v ) -> ( u + x, v + y ))
                 |> List.foldr (\( u, v ) acc -> acc ++ (toString u ++ ", " ++ toString v ++ " ")) ""
     in
-        (case state of
-            Contain { value, playerId } ->
-                [ polygon
-                    [ SvgAttr.fill <| playerColor playerId
-                    , SvgAttr.points points
-                    ]
-                    []
+    (case state of
+        Contain { value, playerId } ->
+            [ polygon
+                [ SvgAttr.fill <| playerColor playerId
+                , SvgAttr.points points
                 ]
-
-            _ ->
                 []
-        )
-            ++ [ polygon
-                    [ case state of
-                        Empty ->
-                            SvgAttr.fill "white"
+            ]
 
-                        UnPlayable Grey ->
-                            SvgAttr.fill "grey"
+        _ ->
+            []
+    )
+        ++ [ polygon
+                [ case state of
+                    Empty ->
+                        SvgAttr.fill "white"
 
-                        UnPlayable (Rainbow c) ->
-                            SvgAttr.fill c
+                    UnPlayable Grey ->
+                        SvgAttr.fill "grey"
 
-                        Contain { value, playerId } ->
-                            SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
-                    , SvgAttr.stroke "black"
-                    , SvgAttr.strokeWidth "2px"
-                    , SvgAttr.points points
-                    , SvgEvents.onClick (PutDownPiece ( round u, round v ))
-                    , case state of
-                        Empty ->
-                            SvgAttr.cursor "pointer"
+                    UnPlayable (Rainbow c) ->
+                        SvgAttr.fill c
 
-                        _ ->
-                            SvgAttr.cursor "default"
-                    ]
-                    []
+                    Contain { value, playerId } ->
+                        SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
+                , SvgAttr.stroke "black"
+                , SvgAttr.strokeWidth "2px"
+                , SvgAttr.points points
+                , SvgEvents.onClick (PutDownPiece ( round u, round v ))
+                , case state of
+                    Empty ->
+                        SvgAttr.cursor "pointer"
 
-               --, text_
-               --    [ SvgAttr.x (toString <| x - l / 1.5)
-               --    , SvgAttr.y (toString <| y)
-               --    , SvgAttr.stroke "black"
-               --    ]
-               --    [ Svg.text ("(" ++ toString u ++ ", " ++ toString v ++ ")") ]
-               ]
+                    _ ->
+                        SvgAttr.cursor "default"
+                ]
+                []
+
+           --, text_
+           --    [ SvgAttr.x (toString <| x - l / 1.5)
+           --    , SvgAttr.y (toString <| y)
+           --    , SvgAttr.stroke "black"
+           --    ]
+           --    [ Svg.text ("(" ++ toString u ++ ", " ++ toString v ++ ")") ]
+           ]
 
 
 deckHexaSvg x y radius { value, playerId } =
@@ -204,28 +204,28 @@ deckHexaSvg x y radius { value, playerId } =
                 |> List.map (\( u, v ) -> ( u + x, v + y ))
                 |> List.foldr (\( u, v ) acc -> acc ++ (toString u ++ ", " ++ toString v ++ " ")) ""
     in
-        [ polygon
-            [ SvgAttr.fill <| playerColor playerId
-            , SvgAttr.points points
-            ]
-            []
-        , polygon
-            [ SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
-            , SvgAttr.stroke "black"
-            , SvgAttr.strokeWidth "2px"
-            , SvgAttr.points points
-            , SvgEvents.onClick (PickUpPiece (Piece value playerId))
-            , SvgAttr.cursor "pointer"
-            ]
-            []
-
-        --, text_
-        --    [ SvgAttr.x (toString <| x - radius / 1.5)
-        --    , SvgAttr.y (toString <| y)
-        --    , SvgAttr.stroke "black"
-        --    ]
-        --    [ Svg.text (toString value) ]
+    [ polygon
+        [ SvgAttr.fill <| playerColor playerId
+        , SvgAttr.points points
         ]
+        []
+    , polygon
+        [ SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
+        , SvgAttr.stroke "black"
+        , SvgAttr.strokeWidth "2px"
+        , SvgAttr.points points
+        , SvgEvents.onClick (PickUpPiece (Piece value playerId))
+        , SvgAttr.cursor "pointer"
+        ]
+        []
+
+    --, text_
+    --    [ SvgAttr.x (toString <| x - radius / 1.5)
+    --    , SvgAttr.y (toString <| y)
+    --    , SvgAttr.stroke "black"
+    --    ]
+    --    [ Svg.text (toString value) ]
+    ]
 
 
 selectedHexaSvg radius { value, playerId } =
@@ -243,19 +243,19 @@ selectedHexaSvg radius { value, playerId } =
                 |> List.map (\( u, v ) -> ( u + 50, v + 50 ))
                 |> List.foldr (\( u, v ) acc -> acc ++ (toString u ++ ", " ++ toString v ++ " ")) ""
     in
-        [ polygon
-            [ SvgAttr.fill <| playerColor playerId
-            , SvgAttr.points points
-            ]
-            []
-        , polygon
-            [ SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
-            , SvgAttr.stroke "black"
-            , SvgAttr.strokeWidth "2px"
-            , SvgAttr.points points
-            ]
-            []
+    [ polygon
+        [ SvgAttr.fill <| playerColor playerId
+        , SvgAttr.points points
         ]
+        []
+    , polygon
+        [ SvgAttr.fill <| "url(#piece" ++ toString value ++ ")"
+        , SvgAttr.stroke "black"
+        , SvgAttr.strokeWidth "2px"
+        , SvgAttr.points points
+        ]
+        []
+    ]
 
 
 
@@ -305,13 +305,13 @@ deckSvg model =
                     defs []
                         piecesPatterns
             in
-                svg
-                    [ SvgAttr.width "750"
-                    , SvgAttr.viewBox <| "0 0 " ++ toString sizeX ++ " " ++ toString sizeY
-                    ]
-                    (def
-                        :: pieces
-                    )
+            svg
+                [ SvgAttr.width "750"
+                , SvgAttr.viewBox <| "0 0 " ++ toString sizeX ++ " " ++ toString sizeY
+                ]
+                (def
+                    :: pieces
+                )
 
 
 hexaBoardSvg n l board =
@@ -358,35 +358,35 @@ hexaBoardSvg n l board =
             defs []
                 piecesPatterns
     in
-        div
+    div
+        [ Attr.style
+            [ ( "width", "100%" )
+
+            --, ( "background-color", "blue" )
+            ]
+        ]
+        [ div
             [ Attr.style
-                [ ( "width", "100%" )
+                [ ( "margin", "auto" )
 
-                --, ( "background-color", "blue" )
+                --, ( "background-color", "red" )
+                , ( "width", "50%" )
+                , ( "max-width", "700px" )
+
+                --, ( "height", "650px" )
                 ]
             ]
-            [ div
-                [ Attr.style
-                    [ ( "margin", "auto" )
-
-                    --, ( "background-color", "red" )
-                    , ( "width", "50%" )
-                    , ( "max-width", "700px" )
-
-                    --, ( "height", "650px" )
-                    ]
+            [ svg
+                [ SvgAttr.width "100%"
+                , SvgAttr.height "100%"
+                , SvgAttr.viewBox <| "0 0 " ++ size ++ " " ++ size
                 ]
-                [ svg
-                    [ SvgAttr.width "100%"
-                    , SvgAttr.height "100%"
-                    , SvgAttr.viewBox <| "0 0 " ++ size ++ " " ++ size
-                    ]
-                    (def :: cells)
-                ]
-
-            --, br [] []
-            --, Html.text <| "number of cells: " ++ (toString <| List.length cells)
+                (def :: cells)
             ]
+
+        --, br [] []
+        --, Html.text <| "number of cells: " ++ (toString <| List.length cells)
+        ]
 
 
 selectedSvg model =
@@ -399,36 +399,42 @@ selectedSvg model =
                     )
                 |> Maybe.andThen .choice
     in
-        case piece of
-            Nothing ->
-                div
-                    [ Attr.style
-                        [ ( "width", "100px" )
-                        , ( "height", "100px" )
-                        , ( "margin", "auto" )
-                        , ( "border-style", "solid" )
-                        , ( "border-color", "black" )
-                        ]
-                    ]
-                    []
+    case piece of
+        Nothing ->
+            span [] []
 
-            Just piece ->
-                div
-                    [ Attr.style
-                        [ ( "width", "100px" )
-                        , ( "height", "100px" )
-                        , ( "margin", "auto" )
-                        , ( "border-style", "solid" )
-                        , ( "border-color", "black" )
+        --div
+        --    [ Attr.style
+        --        [ ( "width", "100px" )
+        --        , ( "height", "100px" )
+        --        , ( "margin", "auto" )
+        --        , ( "border-style", "solid" )
+        --        , ( "border-color", "black" )
+        --        ]
+        --    ]
+        --    []
+        Just piece ->
+            case model.position of
+                Playing ->
+                    div
+                        [ Attr.style
+                            [ ( "width", "100px" )
+                            , ( "height", "100px" )
+                            , ( "margin", "auto" )
+                            , ( "border-style", "solid" )
+                            , ( "border-color", "black" )
+                            ]
                         ]
-                    ]
-                    [ svg
-                        [ SvgAttr.width "100"
-                        , SvgAttr.height "100"
-                        , SvgAttr.viewBox "0 0 100 100"
+                        [ svg
+                            [ SvgAttr.width "100"
+                            , SvgAttr.height "100"
+                            , SvgAttr.viewBox "0 0 100 100"
+                            ]
+                            (selectedHexaSvg 35 piece)
                         ]
-                        (selectedHexaSvg 35 piece)
-                    ]
+
+                _ ->
+                    span [] []
 
 
 
