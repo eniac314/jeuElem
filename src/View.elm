@@ -85,6 +85,7 @@ boardView model =
     div [ Attr.style [ ( "width", "100%" ) ] ]
         [ hexaBoardSvg model.boardSize 35 model.board
         , br [] []
+        , scores model
         , div
             [ Attr.style
                 [ ( "margin", "auto" )
@@ -508,6 +509,56 @@ color n =
             sin (4 * pi * n / 3) * 127 + 128
     in
     "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"
+
+
+scores : Model -> Html Msg
+scores model =
+    let
+        scoresDict =
+            Dict.foldr
+                (\k v acc ->
+                    case v.state of
+                        Contain { value, playerId } ->
+                            Dict.update playerId
+                                (\mv ->
+                                    case mv of
+                                        Nothing ->
+                                            Just 1
+
+                                        Just v ->
+                                            Just (v + 1)
+                                )
+                                acc
+
+                        _ ->
+                            acc
+                )
+                Dict.empty
+                model.board
+    in
+    table
+        [ Attr.style
+            [ ( "float", "right" )
+            , ( "vertical-align", "top" )
+            ]
+        ]
+        ([ tr []
+            [ td [] [ Html.text "playerId" ]
+            , td [] [ Html.text "score" ]
+            ]
+         ]
+            ++ Dict.foldr
+                (\k v acc ->
+                    tr []
+                        [ td [ Attr.style [ ( "background-color", color <| 0.7 * toFloat k ) ] ]
+                            [ Html.text (toString k) ]
+                        , td [] [ Html.text (toString v) ]
+                        ]
+                        :: acc
+                )
+                []
+                scoresDict
+        )
 
 
 winLose : Piece -> Html Msg
