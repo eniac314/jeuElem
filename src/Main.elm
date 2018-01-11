@@ -110,7 +110,7 @@ update msg model =
                                     newPlayers
 
                             players =
-                                Dict.values model.players
+                                Dict.values newPlayers
 
                             turnSelectionOrder =
                                 Dict.values playersWithScore

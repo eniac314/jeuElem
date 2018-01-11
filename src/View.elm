@@ -113,6 +113,9 @@ boardView model =
                 ]
             ]
             [ selectedSvg model
+
+            --, br [] []
+            --, winLose piece
             ]
         ]
 
