@@ -181,12 +181,13 @@ hexaSvg x y state l u v =
                         SvgAttr.cursor "default"
                 ]
                 []
-           , text_
-                [ SvgAttr.x (toString <| x - l / 1.5)
-                , SvgAttr.y (toString <| y)
-                , SvgAttr.stroke "black"
-                ]
-                [ Svg.text ("(" ++ toString u ++ ", " ++ toString v ++ ")") ]
+
+           --, text_
+           --     [ SvgAttr.x (toString <| x - l / 1.5)
+           --     , SvgAttr.y (toString <| y)
+           --     , SvgAttr.stroke "black"
+           --     ]
+           --     [ Svg.text ("(" ++ toString u ++ ", " ++ toString v ++ ")") ]
            ]
 
 
@@ -219,12 +220,13 @@ deckHexaSvg x y radius { value, playerId } =
         , SvgAttr.cursor "pointer"
         ]
         []
-    , text_
-        [ SvgAttr.x (toString <| x - radius / 1.5)
-        , SvgAttr.y (toString <| y)
-        , SvgAttr.stroke "black"
-        ]
-        [ Svg.text (toString value) ]
+
+    --, text_
+    --    [ SvgAttr.x (toString <| x - radius / 1.5)
+    --    , SvgAttr.y (toString <| y)
+    --    , SvgAttr.stroke "black"
+    --    ]
+    --    [ Svg.text (toString value) ]
     ]
 
 

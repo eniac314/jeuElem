@@ -134,13 +134,11 @@ var _user$project$Main$shifumi = F2(
 				{ctor: '_Tuple2', _0: val1, _1: val2},
 				_user$project$Data$shifumiTable));
 	});
-var _user$project$Main$neighbours = function (c) {
-	var y = c.yPos;
-	var x = c.xPos;
-	return {
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: x - 1, _1: y - 1},
-		_1: {
+var _user$project$Main$neighbours = F2(
+	function (c, size) {
+		var y = c.yPos;
+		var x = c.xPos;
+		var always = {
 			ctor: '::',
 			_0: {ctor: '_Tuple2', _0: x, _1: y - 1},
 			_1: {
@@ -152,19 +150,39 @@ var _user$project$Main$neighbours = function (c) {
 					_1: {
 						ctor: '::',
 						_0: {ctor: '_Tuple2', _0: x, _1: y + 1},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: x + 1, _1: y + 1},
-							_1: {ctor: '[]'}
-						}
+						_1: {ctor: '[]'}
 					}
 				}
 			}
-		}
-	};
-};
-var _user$project$Main$update_board = F2(
-	function (c, board) {
+		};
+		return (_elm_lang$core$Native_Utils.cmp(y, size) < 0) ? {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: x - 1, _1: y - 1},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: x + 1, _1: y + 1},
+				_1: always
+			}
+		} : (_elm_lang$core$Native_Utils.eq(y, size) ? {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: x - 1, _1: y - 1},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: x - 1, _1: y + 1},
+				_1: always
+			}
+		} : {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: x + 1, _1: y - 1},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: x - 1, _1: y + 1},
+				_1: always
+			}
+		});
+	});
+var _user$project$Main$update_board = F3(
+	function (c, boardSize, board) {
 		var convert_neighbours = F5(
 			function (piece, n_list, board, cells_todo, cells_done) {
 				convert_neighbours:
@@ -295,7 +313,7 @@ var _user$project$Main$update_board = F2(
 								var _p20 = A5(
 									convert_neighbours,
 									_p19._0,
-									_user$project$Main$neighbours(_p21),
+									A2(_user$project$Main$neighbours, _p21, boardSize),
 									board,
 									cells_todo,
 									cells_done);
@@ -724,9 +742,10 @@ var _user$project$Main$update = F2(
 											_p43,
 											_p44,
 											_user$project$Types$Contain(_p39._0._0));
-										var newBoard = A2(
+										var newBoard = A3(
 											_user$project$Main$update_board,
 											newCell,
+											model.boardSize,
 											A3(
 												_elm_lang$core$Dict$insert,
 												{ctor: '_Tuple2', _0: _p43, _1: _p44},

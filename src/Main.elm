@@ -234,7 +234,7 @@ update msg model =
 
                                 newBoard =
                                     Dict.insert ( xPos, yPos ) newCell model.board
-                                        |> update_board newCell
+                                        |> update_board newCell model.boardSize
 
                                 newPlayers =
                                     Dict.update playerId
@@ -322,22 +322,46 @@ hexaBoard n =
             Dict.empty
 
 
-neighbours : Cell -> List ( Int, Int )
-neighbours c =
+neighbours : Cell -> Int -> List ( Int, Int )
+neighbours c size =
     let
         x =
             c.xPos
 
         y =
             c.yPos
+
+        always =
+            [ ( x, y - 1 )
+            , ( x - 1, y )
+            , ( x + 1, y )
+            , ( x, y + 1 )
+            ]
     in
-    [ ( x - 1, y - 1 )
-    , ( x, y - 1 )
-    , ( x - 1, y )
-    , ( x + 1, y )
-    , ( x, y + 1 )
-    , ( x + 1, y + 1 )
-    ]
+    if y < size then
+        ( x - 1, y - 1 ) :: ( x + 1, y + 1 ) :: always
+    else if y == size then
+        ( x - 1, y - 1 ) :: ( x - 1, y + 1 ) :: always
+    else
+        ( x + 1, y - 1 ) :: ( x - 1, y + 1 ) :: always
+
+
+
+--neighbours : Cell -> List ( Int, Int )
+--neighbours c =
+--    let
+--        x =
+--            c.xPos
+--        y =
+--            c.yPos
+--    in
+--    [ ( x - 1, y - 1 )
+--    , ( x, y - 1 )
+--    , ( x - 1, y )
+--    , ( x + 1, y )
+--    , ( x, y + 1 )
+--    , ( x + 1, y + 1 )
+--    ]
 
 
 shifumi : Piece -> Piece -> Int
@@ -381,8 +405,8 @@ boardWithEdge n board =
 -------------------------------------------------------------------------------
 
 
-update_board : Cell -> Board -> Board
-update_board c board =
+update_board : Cell -> Int -> Board -> Board
+update_board c boardSize board =
     let
         update_board_helper board cells_todo cells_done =
             case cells_todo of
@@ -395,7 +419,7 @@ update_board c board =
                             if not (List.member c cells_done) then
                                 let
                                     ( new_board, new_cells_todo ) =
-                                        convert_neighbours piece (neighbours c) board cells_todo cells_done
+                                        convert_neighbours piece (neighbours c boardSize) board cells_todo cells_done
                                 in
                                 update_board_helper new_board new_cells_todo (c :: cells_done)
                             else
