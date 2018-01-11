@@ -459,7 +459,7 @@ piecesPatterns =
                     , SvgAttr.height "80"
                     , SvgAttr.width "80"
                     , SvgAttr.xlinkHref <|
-                        "../images/pieces/piece"
+                        "images/pieces/piece"
                             ++ toString n
                             ++ ".png"
                     ]
@@ -471,17 +471,35 @@ piecesPatterns =
 
 playerColor : Int -> String
 playerColor playerId =
-    if playerId == 1 then
-        "#f0f9e8"
-    else if playerId == 2 then
-        "#ccebc5"
-    else if playerId == 3 then
-        "#a8ddb5"
-    else if playerId == 4 then
-        "#7bccc4"
-    else if playerId == 5 then
-        "#43a2ca"
-    else if playerId == 6 then
-        "#0868ac"
-    else
-        "white"
+    color <| 0.7 * toFloat playerId
+
+
+
+--if playerId == 1 then
+--    "#f0f9e8"
+--else if playerId == 2 then
+--    "#ccebc5"
+--else if playerId == 3 then
+--    "#a8ddb5"
+--else if playerId == 4 then
+--    "#7bccc4"
+--else if playerId == 5 then
+--    "#43a2ca"
+--else if playerId == 6 then
+--    "#0868ac"
+--else
+--    "white"
+
+
+color n =
+    let
+        red =
+            sin n * 127 + 128
+
+        green =
+            sin (2 * pi * n / 3) * 127 + 128
+
+        blue =
+            sin (4 * pi * n / 3) * 127 + 128
+    in
+    "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"

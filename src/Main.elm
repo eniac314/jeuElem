@@ -425,12 +425,12 @@ update_board c board =
                                             new_board =
                                                 Dict.insert n new_n_cell board
                                         in
-                                        case Dict.get ( piece.value, n_piece.value ) shifumiTable of
-                                            Just 1 ->
+                                        case shifumi piece n_piece of
+                                            1 ->
                                                 convert_neighbours piece ns new_board cells_todo cells_done
 
-                                            Just 2 ->
-                                                convert_neighbours piece ns new_board (cells_todo ++ [ n_cell ]) cells_done
+                                            2 ->
+                                                convert_neighbours piece ns new_board (cells_todo ++ [ new_n_cell ]) cells_done
 
                                             _ ->
                                                 convert_neighbours piece ns board cells_todo cells_done

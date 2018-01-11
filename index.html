@@ -10575,8 +10575,36 @@ var _user$project$Types$InitializePlayers = {ctor: 'InitializePlayers'};
 var _user$project$Types$SetPlayerNumber = function (a) {
 	return {ctor: 'SetPlayerNumber', _0: a};
 };
+var _user$project$View$color = function (n) {
+	var blue = (_elm_lang$core$Basics$sin(((4 * _elm_lang$core$Basics$pi) * n) / 3) * 127) + 128;
+	var green = (_elm_lang$core$Basics$sin(((2 * _elm_lang$core$Basics$pi) * n) / 3) * 127) + 128;
+	var red = (_elm_lang$core$Basics$sin(n) * 127) + 128;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'rgb(',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$round(red)),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				', ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						_elm_lang$core$Basics$round(green)),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						', ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(
+								_elm_lang$core$Basics$round(blue)),
+							')'))))));
+};
 var _user$project$View$playerColor = function (playerId) {
-	return _elm_lang$core$Native_Utils.eq(playerId, 1) ? '#f0f9e8' : (_elm_lang$core$Native_Utils.eq(playerId, 2) ? '#ccebc5' : (_elm_lang$core$Native_Utils.eq(playerId, 3) ? '#a8ddb5' : (_elm_lang$core$Native_Utils.eq(playerId, 4) ? '#7bccc4' : (_elm_lang$core$Native_Utils.eq(playerId, 5) ? '#43a2ca' : (_elm_lang$core$Native_Utils.eq(playerId, 6) ? '#0868ac' : 'white')))));
+	return _user$project$View$color(
+		0.7 * _elm_lang$core$Basics$toFloat(playerId));
 };
 var _user$project$View$piecesPatterns = A2(
 	_elm_lang$core$List$map,
@@ -11842,63 +11870,52 @@ var _user$project$Main$update_board = F2(
 											state: _user$project$Types$Contain(new_n_piece)
 										});
 									var new_board = A3(_elm_lang$core$Dict$insert, _p16, new_n_cell, board);
-									var _p13 = A2(
-										_elm_lang$core$Dict$get,
-										{ctor: '_Tuple2', _0: piece.value, _1: _p14.value},
-										_user$project$Data$shifumiTable);
-									_v7_2:
-									do {
-										if (_p13.ctor === 'Just') {
-											switch (_p13._0) {
-												case 1:
-													var _v8 = piece,
-														_v9 = _p17,
-														_v10 = new_board,
-														_v11 = cells_todo,
-														_v12 = cells_done;
-													piece = _v8;
-													n_list = _v9;
-													board = _v10;
-													cells_todo = _v11;
-													cells_done = _v12;
-													continue convert_neighbours;
-												case 2:
-													var _v13 = piece,
-														_v14 = _p17,
-														_v15 = new_board,
-														_v16 = A2(
-														_elm_lang$core$Basics_ops['++'],
-														cells_todo,
-														{
-															ctor: '::',
-															_0: _p15,
-															_1: {ctor: '[]'}
-														}),
-														_v17 = cells_done;
-													piece = _v13;
-													n_list = _v14;
-													board = _v15;
-													cells_todo = _v16;
-													cells_done = _v17;
-													continue convert_neighbours;
-												default:
-													break _v7_2;
-											}
-										} else {
-											break _v7_2;
-										}
-									} while(false);
-									var _v18 = piece,
-										_v19 = _p17,
-										_v20 = board,
-										_v21 = cells_todo,
-										_v22 = cells_done;
-									piece = _v18;
-									n_list = _v19;
-									board = _v20;
-									cells_todo = _v21;
-									cells_done = _v22;
-									continue convert_neighbours;
+									var _p13 = A2(_user$project$Main$shifumi, piece, _p14);
+									switch (_p13) {
+										case 1:
+											var _v8 = piece,
+												_v9 = _p17,
+												_v10 = new_board,
+												_v11 = cells_todo,
+												_v12 = cells_done;
+											piece = _v8;
+											n_list = _v9;
+											board = _v10;
+											cells_todo = _v11;
+											cells_done = _v12;
+											continue convert_neighbours;
+										case 2:
+											var _v13 = piece,
+												_v14 = _p17,
+												_v15 = new_board,
+												_v16 = A2(
+												_elm_lang$core$Basics_ops['++'],
+												cells_todo,
+												{
+													ctor: '::',
+													_0: new_n_cell,
+													_1: {ctor: '[]'}
+												}),
+												_v17 = cells_done;
+											piece = _v13;
+											n_list = _v14;
+											board = _v15;
+											cells_todo = _v16;
+											cells_done = _v17;
+											continue convert_neighbours;
+										default:
+											var _v18 = piece,
+												_v19 = _p17,
+												_v20 = board,
+												_v21 = cells_todo,
+												_v22 = cells_done;
+											piece = _v18;
+											n_list = _v19;
+											board = _v20;
+											cells_todo = _v21;
+											cells_done = _v22;
+											continue convert_neighbours;
+									}
 								} else {
 									var _v23 = piece,
 										_v24 = _p17,

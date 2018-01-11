@@ -1,5 +1,33 @@
+var _user$project$View$color = function (n) {
+	var blue = (_elm_lang$core$Basics$sin(((4 * _elm_lang$core$Basics$pi) * n) / 3) * 127) + 128;
+	var green = (_elm_lang$core$Basics$sin(((2 * _elm_lang$core$Basics$pi) * n) / 3) * 127) + 128;
+	var red = (_elm_lang$core$Basics$sin(n) * 127) + 128;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'rgb(',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$round(red)),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				', ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						_elm_lang$core$Basics$round(green)),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						', ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(
+								_elm_lang$core$Basics$round(blue)),
+							')'))))));
+};
 var _user$project$View$playerColor = function (playerId) {
-	return _elm_lang$core$Native_Utils.eq(playerId, 1) ? '#f0f9e8' : (_elm_lang$core$Native_Utils.eq(playerId, 2) ? '#ccebc5' : (_elm_lang$core$Native_Utils.eq(playerId, 3) ? '#a8ddb5' : (_elm_lang$core$Native_Utils.eq(playerId, 4) ? '#7bccc4' : (_elm_lang$core$Native_Utils.eq(playerId, 5) ? '#43a2ca' : (_elm_lang$core$Native_Utils.eq(playerId, 6) ? '#0868ac' : 'white')))));
+	return _user$project$View$color(
+		0.7 * _elm_lang$core$Basics$toFloat(playerId));
 };
 var _user$project$View$piecesPatterns = A2(
 	_elm_lang$core$List$map,
