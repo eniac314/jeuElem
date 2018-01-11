@@ -1,5 +1,6 @@
 module View exposing (..)
 
+import Data exposing (..)
 import Dict exposing (..)
 import Html exposing (..)
 import Html.Attributes as Attr
@@ -416,21 +417,25 @@ selectedSvg model =
         Just piece ->
             case model.position of
                 Playing ->
-                    div
-                        [ Attr.style
-                            [ ( "width", "100px" )
-                            , ( "height", "100px" )
-                            , ( "margin", "auto" )
-                            , ( "border-style", "solid" )
-                            , ( "border-color", "black" )
+                    div []
+                        [ div
+                            [ Attr.style
+                                [ ( "width", "100px" )
+                                , ( "height", "100px" )
+                                , ( "margin", "auto" )
+                                , ( "border-style", "solid" )
+                                , ( "border-color", "black" )
+                                ]
                             ]
-                        ]
-                        [ svg
-                            [ SvgAttr.width "100"
-                            , SvgAttr.height "100"
-                            , SvgAttr.viewBox "0 0 100 100"
+                            [ svg
+                                [ SvgAttr.width "100"
+                                , SvgAttr.height "100"
+                                , SvgAttr.viewBox "0 0 100 100"
+                                ]
+                                (selectedHexaSvg 35 piece)
                             ]
-                            (selectedHexaSvg 35 piece)
+                        , br [] []
+                        , winLose piece
                         ]
 
                 _ ->
@@ -503,3 +508,78 @@ color n =
             sin (4 * pi * n / 3) * 127 + 128
     in
     "rgb(" ++ toString (round red) ++ ", " ++ toString (round green) ++ ", " ++ toString (round blue) ++ ")"
+
+
+winLose : Piece -> Html Msg
+winLose { value, playerId } =
+    let
+        ( losers, winners ) =
+            Dict.foldr
+                (\( v1, v2 ) res ( lAcc, wAcc ) ->
+                    if v1 /= value || v1 == v2 then
+                        ( lAcc, wAcc )
+                    else if res > 0 then
+                        ( lAcc, ( v2, res ) :: wAcc )
+                    else
+                        ( ( v2, res ) :: lAcc, wAcc )
+                )
+                ( [], [] )
+                shifumiTable
+
+        makeTd ( v, res ) =
+            let
+                color =
+                    if res == 1 then
+                        "lightGreen"
+                    else if res == 2 then
+                        "green"
+                    else if res == -1 then
+                        "gold"
+                    else if res == -2 then
+                        "darkOrange"
+                    else
+                        "white"
+            in
+            td
+                [ Attr.style
+                    [ ( "background-image"
+                      , "url('images/pieces/piece"
+                            ++ toString v
+                            ++ ".png')"
+                      )
+                    , ( "background-color", color )
+                    , ( "width", "50px" )
+                    , ( "height", "50px" )
+                    , ( "background-size", "contain" )
+                    ]
+                ]
+                []
+
+        losersTd =
+            List.map makeTd losers
+
+        winnersTd =
+            List.map makeTd winners
+    in
+    table
+        [ Attr.style
+            [ ( "margin", "auto" )
+            , ( "border-style", "solid" )
+            , ( "border-color", "black" )
+            ]
+        ]
+        [ tr []
+            (td
+                [ Attr.style []
+                ]
+                [ Html.text "loses to " ]
+                :: losersTd
+            )
+        , tr []
+            (td
+                [ Attr.style []
+                ]
+                [ Html.text "wins against " ]
+                :: winnersTd
+            )
+        ]
