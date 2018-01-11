@@ -12495,8 +12495,8 @@ var _user$project$Main$update = F2(
 												_elm_lang$core$List$foldr,
 												F2(
 													function (p2, acc) {
-														var piece2 = A2(_elm_lang$core$Maybe$withDefault, _user$project$Types$dummyPiece, p2.choice);
 														var piece1 = A2(_elm_lang$core$Maybe$withDefault, _user$project$Types$dummyPiece, p.choice);
+														var piece2 = A2(_elm_lang$core$Maybe$withDefault, piece1, p2.choice);
 														return acc + A2(_user$project$Main$shifumi, piece1, piece2);
 													}),
 												0,

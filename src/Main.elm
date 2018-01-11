@@ -99,7 +99,7 @@ update msg model =
                                                                 Maybe.withDefault dummyPiece p.choice
 
                                                             piece2 =
-                                                                Maybe.withDefault dummyPiece p2.choice
+                                                                Maybe.withDefault piece1 p2.choice
                                                         in
                                                         acc + shifumi piece1 piece2
                                                     )
@@ -344,24 +344,6 @@ neighbours c size =
         ( x - 1, y - 1 ) :: ( x - 1, y + 1 ) :: always
     else
         ( x + 1, y - 1 ) :: ( x - 1, y + 1 ) :: always
-
-
-
---neighbours : Cell -> List ( Int, Int )
---neighbours c =
---    let
---        x =
---            c.xPos
---        y =
---            c.yPos
---    in
---    [ ( x - 1, y - 1 )
---    , ( x, y - 1 )
---    , ( x - 1, y )
---    , ( x + 1, y )
---    , ( x, y + 1 )
---    , ( x + 1, y + 1 )
---    ]
 
 
 shifumi : Piece -> Piece -> Int
