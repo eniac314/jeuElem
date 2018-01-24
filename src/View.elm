@@ -480,24 +480,21 @@ piecesPatterns =
 
 playerColor : Int -> String
 playerColor playerId =
-    color <| 0.7 * toFloat playerId
-
-
-
---if playerId == 1 then
---    "#f0f9e8"
---else if playerId == 2 then
---    "#ccebc5"
---else if playerId == 3 then
---    "#a8ddb5"
---else if playerId == 4 then
---    "#7bccc4"
---else if playerId == 5 then
---    "#43a2ca"
---else if playerId == 6 then
---    "#0868ac"
---else
---    "white"
+    --color <| 0.7 * toFloat playerId
+    if playerId == 1 then
+        "#ff0000"
+    else if playerId == 2 then
+        "#ff7f00"
+    else if playerId == 3 then
+        "#ffff00"
+    else if playerId == 4 then
+        "#00ff00"
+    else if playerId == 5 then
+        "#0000ff"
+    else if playerId == 6 then
+        "#b400ff"
+    else
+        "white"
 
 
 color n =

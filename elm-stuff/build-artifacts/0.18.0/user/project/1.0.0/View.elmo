@@ -305,8 +305,7 @@ var _user$project$View$scores = function (model) {
 				scoresDict)));
 };
 var _user$project$View$playerColor = function (playerId) {
-	return _user$project$View$color(
-		0.7 * _elm_lang$core$Basics$toFloat(playerId));
+	return _elm_lang$core$Native_Utils.eq(playerId, 1) ? '#ff0000' : (_elm_lang$core$Native_Utils.eq(playerId, 2) ? '#ff7f00' : (_elm_lang$core$Native_Utils.eq(playerId, 3) ? '#ffff00' : (_elm_lang$core$Native_Utils.eq(playerId, 4) ? '#00ff00' : (_elm_lang$core$Native_Utils.eq(playerId, 5) ? '#0000ff' : (_elm_lang$core$Native_Utils.eq(playerId, 6) ? '#b400ff' : 'white')))));
 };
 var _user$project$View$piecesPatterns = A2(
 	_elm_lang$core$List$map,
